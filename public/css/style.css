@@ -25,10 +25,11 @@ body {
     z-index: 1000;
 }
 
-.logo {
-    font-size: 1.4rem;
-    font-weight: 800;
-    letter-spacing: 0.18em;
+.logo-img {
+    height: 70px;
+    width: auto;
+    object-fit: contain;
+    display: block;
 }
 
 .nav-links a {
@@ -48,7 +49,7 @@ body {
 /* HERO */
 .hero {
     height: 100vh;
-    background: url('../public/img/fast-index.jpg') center/cover no-repeat;
+    background: url('/img/fast-index.jpg') center/cover no-repeat;
     display: flex;
     align-items: center;
     padding: 0 40px;
@@ -228,7 +229,7 @@ body {
     opacity: 0.9;
 }
 
-/* FORMS (order.html / riders.html) */
+/* FORMS */
 .form-wrapper {
     max-width: 520px;
     margin: 120px auto 60px;
