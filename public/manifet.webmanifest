@@ -7,7 +7,7 @@
   "theme_color": "#ffcc00",
   "icons": [
     {
-      "src": "public/img/fast-index.jpg",
+      "src": "/img/fast-index.jpg",
       "sizes": "512x512",
       "type": "image/jpeg"
     }
