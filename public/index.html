@@ -4,12 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Fast Roll — Beltline Delivery</title>
+
+    <!-- Social preview -->
+    <meta property="og:title" content="The Fast Roll — Beltline Delivery" />
+    <meta property="og:description" content="Beltline-native delivery by skaters, longboarders, e-bikes & OneWheels in Atlanta." />
+    <meta property="og:image" content="public/img/fast-index.jpg" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="manifest" href="manifest.webmanifest" />
     <link rel="stylesheet" href="css/style.css" />
 </head>
 
 <body>
 
-    <!-- NAVBAR -->
     <nav class="nav">
         <div class="logo">THE FAST ROLL</div>
         <div class="nav-links">
@@ -19,15 +27,10 @@
         </div>
     </nav>
 
-    <!-- HERO -->
     <section class="hero">
-        <div class="hero-overlay"></div>
-
         <div class="hero-content">
-            <h1 class="hero-title">Beltline Delivery. Fast. Smooth. On Wheels.</h1>
-            <p class="hero-subtext">
-                Skaters, longboarders, e‑bikes & OneWheels delivering small items right off the Atlanta Beltline.
-            </p>
+            <h1>Beltline Delivery. Fast. Smooth. On Wheels.</h1>
+            <p>Skaters, longboarders, e‑bikes & OneWheels delivering small items right off the Atlanta Beltline.</p>
 
             <div class="hero-buttons">
                 <button id="orderBtn" class="primary-btn">Order Delivery</button>
@@ -36,19 +39,18 @@
         </div>
     </section>
 
-    <!-- WELCOME SECTION -->
     <section class="welcome">
         <h2>Welcome to The Fast Roll</h2>
         <p>
             A Beltline‑native delivery service built for speed, community, and smooth motion.  
-            Whether you're grabbing ice cream, flowers, snacks, or a quick grocery item —  
-            our riders glide it straight to you.
+            You buy the item, we roll it to you — ice cream, flowers, snacks, and small groceries
+            from spots right off the Atlanta Beltline.
         </p>
     </section>
 
-    <!-- HOW IT WORKS -->
     <section id="how" class="section">
         <h2>How It Works</h2>
+        <p class="section-sub">Simple, safe, and built for small, low‑risk items while we grow the network.</p>
         <div class="steps">
             <div class="step">
                 <h3>1. You Buy the Item</h3>
@@ -69,17 +71,34 @@
         </div>
     </section>
 
-    <!-- RIDERS -->
-    <section id="riders" class="section dark">
-        <h2>Riders Wanted</h2>
-        <p>
-            Longboarders, skaters, e‑bikes, OneWheels —  
-            earn fast payouts delivering small items along the Beltline.
-        </p>
-        <button id="joinRiders" class="primary-btn">Join The Fast Roll</button>
+    <section id="order" class="section">
+        <h2>Ready to Roll?</h2>
+        <p class="section-sub">Start a delivery request in under a minute.</p>
+        <div class="order-panel">
+            <h3>Order a Beltline Delivery</h3>
+            <p>We currently support small, low‑risk items under $20 from shops directly off the Beltline.</p>
+            <button id="orderPanelBtn" class="primary-btn">Start Order</button>
+        </div>
     </section>
 
-    <!-- FOOTER -->
+    <section id="riders" class="section dark">
+        <h2>Riders Wanted</h2>
+        <p class="section-sub">
+            Longboarders, skaters, e‑bikes, OneWheels — earn fast payouts delivering small items along the Beltline.
+        </p>
+        <div class="rider-grid">
+            <div class="rider-card">
+                Deliver ice cream, flowers, snacks, and small groceries — all within a tight Beltline radius.
+            </div>
+            <div class="rider-card">
+                Get paid via PayPal after each completed dropoff with photo proof.
+            </div>
+        </div>
+        <div style="margin-top:24px;">
+            <button id="joinRiders" class="primary-btn">Join The Fast Roll</button>
+        </div>
+    </section>
+
     <footer>
         <p>© 2026 The Fast Roll — Built for the Atlanta Beltline</p>
     </footer>
