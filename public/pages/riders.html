@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rider Sign Up — The Fast Roll</title>
+
+    <meta property="og:title" content="Rider Sign Up — The Fast Roll" />
+    <meta property="og:description" content="Join The Fast Roll as a Beltline rider and earn fast payouts." />
+    <meta property="og:image" content="public/img/fast-index.jpg" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+    <nav class="nav">
+        <div class="logo">THE FAST ROLL</div>
+        <div class="nav-links">
+            <a href="index.html#how">How It Works</a>
+            <a href="order.html">Order</a>
+            <a href="riders.html">Riders</a>
+        </div>
+    </nav>
+
+    <main class="form-wrapper">
+        <h1>Become a Fast Roll Rider</h1>
+        <p>Longboard, skate, e‑bike, or OneWheel? Turn your Beltline laps into quick payouts.</p>
+
+        <form id="riderForm">
+            <div class="form-group">
+                <label for="name">Full name</label>
+                <input id="name" name="name" type="text" required />
+            </div>
+
+            <div class="form-group">
+                <label for="vehicle">What do you ride?</label>
+                <select id="vehicle" name="vehicle" required>
+                    <option value="">Select one</option>
+                    <option value="longboard">Longboard</option>
+                    <option value="skateboard">Skateboard</option>
+                    <option value="ebike">Electric bike</option>
+                    <option value="onewheel">OneWheel</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="paypal">PayPal email (for payouts)</label>
+                <input id="paypal" name="paypal" type="email" required />
+            </div>
+
+            <p class="form-note">
+                We’ll review your info and send onboarding details, safety guidelines, and payout structure.
+            </p>
+
+            <div class="form-actions">
+                <button type="submit" class="primary-btn">Submit Application</button>
+            </div>
+        </form>
+    </main>
+
+    <footer>
+        <p>© 2026 The Fast Roll — Built for the Atlanta Beltline</p>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
