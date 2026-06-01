@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Delivery — The Fast Roll</title>
+
+    <meta property="og:title" content="Order Delivery — The Fast Roll" />
+    <meta property="og:description" content="Start a Beltline delivery request with The Fast Roll." />
+    <meta property="og:image" content="public/img/fast-index.jpg" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+    <nav class="nav">
+        <div class="logo">THE FAST ROLL</div>
+        <div class="nav-links">
+            <a href="index.html#how">How It Works</a>
+            <a href="order.html">Order</a>
+            <a href="riders.html">Riders</a>
+        </div>
+    </nav>
+
+    <main class="form-wrapper">
+        <h1>Order a Beltline Delivery</h1>
+        <p>Tell us what you bought and where you are. We’ll handle the roll.</p>
+
+        <form id="orderForm">
+            <div class="form-group">
+                <label for="item">What did you buy?</label>
+                <input id="item" name="item" type="text" placeholder="2 scoops from Jeni’s, bouquet from X shop..." required />
+            </div>
+
+            <div class="form-group">
+                <label for="store">Store name (on the Beltline)</label>
+                <input id="store" name="store" type="text" placeholder="Store or restaurant name" required />
+            </div>
+
+            <div class="form-group">
+                <label for="dropoff">Dropoff location</label>
+                <textarea id="dropoff" name="dropoff" placeholder="Exact spot or address near the Beltline" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="value">Approximate item value (USD)</label>
+                <input id="value" name="value" type="number" min="1" max="20" required />
+            </div>
+
+            <p class="form-note">
+                After submitting, you’ll be prompted to upload a screenshot of your receipt and complete payment via PayPal.
+            </p>
+
+            <div class="form-actions">
+                <button type="submit" class="primary-btn">Continue to PayPal</button>
+            </div>
+        </form>
+    </main>
+
+    <footer>
+        <p>© 2026 The Fast Roll — Built for the Atlanta Beltline</p>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
