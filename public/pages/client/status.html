@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Status — The Fast Roll</title>
+
+    <meta property="og:title" content="Track Your Delivery — The Fast Roll" />
+    <meta property="og:image" content="../../public/img/fast-index.jpg" />
+
+    <link rel="stylesheet" href="../../css/style.css" />
+</head>
+
+<body>
+
+    <nav class="nav">
+        <div class="logo">THE FAST ROLL</div>
+        <div class="nav-links">
+            <a href="../../index.html">Home</a>
+        </div>
+    </nav>
+
+    <section class="section">
+        <h2>Your Delivery Status</h2>
+        <p class="section-sub">This page updates automatically.</p>
+
+        <div id="statusBox" class="order-panel">
+            <h3>Status: Waiting for rider…</h3>
+            <p id="statusDetails">We’ll notify you when a rider accepts your order.</p>
+        </div>
+
+        <div id="proofContainer" class="order-panel" style="display:none;">
+            <h3>Delivery Photos</h3>
+            <p>Pickup and dropoff proof will appear here.</p>
+            <img id="pickupPhoto" style="width:100%; margin-top:10px; display:none;" />
+            <img id="dropoffPhoto" style="width:100%; margin-top:10px; display:none;" />
+        </div>
+    </section>
+
+    <script src="../../js/app.js"></script>
+</body>
+</html>
