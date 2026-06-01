@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Receipt — The Fast Roll</title>
+
+    <meta property="og:title" content="Upload Receipt — The Fast Roll" />
+    <meta property="og:image" content="../../public/img/fast-index.jpg" />
+
+    <link rel="stylesheet" href="../../css/style.css" />
+</head>
+
+<body>
+
+    <nav class="nav">
+        <div class="logo">THE FAST ROLL</div>
+        <div class="nav-links">
+            <a href="../../index.html">Home</a>
+        </div>
+    </nav>
+
+    <main class="form-wrapper">
+        <h1>Upload Your Receipt</h1>
+        <p>We use this to verify your purchase for pickup.</p>
+
+        <form id="receiptForm">
+            <div class="form-group">
+                <label>Receipt Screenshot</label>
+                <input type="file" id="receipt" accept="image/*" required />
+            </div>
+
+            <p class="form-note">
+                Riders will show this receipt to the store during pickup.
+            </p>
+
+            <button class="primary-btn" type="submit">Submit Receipt</button>
+        </form>
+    </main>
+
+    <script src="../../js/app.js"></script>
+</body>
+</html>
