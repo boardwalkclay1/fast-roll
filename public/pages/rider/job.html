@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Active Job — The Fast Roll</title>
+
+    <meta property="og:title" content="Active Delivery Job — The Fast Roll" />
+    <meta property="og:image" content="../../public/img/fast-index.jpg" />
+
+    <link rel="stylesheet" href="../../css/style.css" />
+</head>
+
+<body>
+
+    <nav class="nav">
+        <div class="logo">THE FAST ROLL</div>
+        <div class="nav-links">
+            <a href="../../index.html">Home</a>
+        </div>
+    </nav>
+
+    <main class="form-wrapper">
+        <h1>Active Delivery</h1>
+        <p>Follow the instructions below to complete the job.</p>
+
+        <div id="jobDetails" class="order-panel">
+            <h3>Loading job…</h3>
+        </div>
+
+        <form id="pickupForm" class="form-wrapper" style="margin-top:20px;">
+            <h2>Pickup Proof</h2>
+            <div class="form-group">
+                <label>Upload Pickup Photo</label>
+                <input type="file" id="pickupPhoto" accept="image/*" required />
+            </div>
+            <button class="primary-btn" type="submit">Submit Pickup Proof</button>
+        </form>
+
+        <form id="dropoffForm" class="form-wrapper" style="margin-top:20px; display:none;">
+            <h2>Dropoff Proof</h2>
+            <div class="form-group">
+                <label>Upload Dropoff Photo</label>
+                <input type="file" id="dropoffPhoto" accept="image/*" required />
+            </div>
+            <button class="primary-btn" type="submit">Complete Delivery</button>
+        </form>
+
+    </main>
+
+    <script src="../../js/app.js"></script>
+</body>
+</html>
