@@ -1,7 +1,8 @@
 /* ============================================================
    THE FAST ROLL — FULL FRONT-END LOGIC
    Handles: client signup, login, order, receipt upload,
-   status polling, rider signup, login, dashboard, job flow.
+   status polling, rider signup, login, dashboard, job flow,
+   weight, tips (pre + post), and session.
    ============================================================ */
 
 
@@ -101,12 +102,23 @@ if (clientLoginForm) {
 
 
 /* ============================================================
-   CLIENT ORDER CREATION
+   CLIENT ORDER CREATION (with weight + tipPre)
    ============================================================ */
 
 const orderForm = $("orderForm");
 
 if (orderForm) {
+    const tipPreSelect = $("tipPre");
+    const customTipWrapper = $("customTipWrapper");
+    const tipCustomInput = $("tipCustom");
+
+    if (tipPreSelect && customTipWrapper) {
+        tipPreSelect.addEventListener("change", () => {
+            customTipWrapper.style.display =
+                tipPreSelect.value === "custom" ? "block" : "none";
+        });
+    }
+
     orderForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -116,7 +128,17 @@ if (orderForm) {
         const item = $("item").value.trim();
         const store = $("store").value.trim();
         const dropoff = $("dropoff").value.trim();
-        const value = $("value").value;
+        const value = Number($("value").value);
+        const weight = Number($("weight") ? $("weight").value : 0);
+
+        let tipPre = 0;
+        if (tipPreSelect) {
+            if (tipPreSelect.value === "custom" && tipCustomInput) {
+                tipPre = Number(tipCustomInput.value || 0);
+            } else {
+                tipPre = Number(tipPreSelect.value || 0);
+            }
+        }
 
         const res = await fetch("/api/client/order", {
             method: "POST",
@@ -126,7 +148,9 @@ if (orderForm) {
                 item,
                 store,
                 dropoff,
-                value
+                value,
+                weight,
+                tipPre
             })
         });
 
@@ -154,6 +178,8 @@ if (receiptForm) {
         if (!order) return window.location.href = "/pages/client/order.html";
 
         const file = $("receipt").files[0];
+        if (!file) return alert("Please upload a receipt image.");
+
         const formData = new FormData();
         formData.append("receipt", file);
         formData.append("orderId", order.id);
@@ -209,6 +235,29 @@ if (statusBox) {
 
 
 /* ============================================================
+   CLIENT TIP AFTER DELIVERY (success page)
+   ============================================================ */
+
+async function sendPostTip(amount) {
+    const order = getSession("order");
+    if (!order) return alert("No order found.");
+
+    const tipValue = Number(amount || 0);
+    if (!tipValue || tipValue <= 0) return alert("Enter a valid tip amount.");
+
+    const res = await fetch("/api/client/tip-post", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId: order.id, tipPost: tipValue })
+    });
+
+    if (!res.ok) return alert("Tip failed. Try again.");
+
+    alert("Thanks for tipping your rider!");
+}
+
+
+/* ============================================================
    RIDER SIGNUP
    ============================================================ */
 
@@ -245,7 +294,7 @@ if (riderSignupForm) {
 
 
 /* ============================================================
-   RIDER DASHBOARD — JOB LIST
+   RIDER DASHBOARD — JOB LIST (showing tip + payout if provided)
    ============================================================ */
 
 const jobsList = $("jobsList");
@@ -263,10 +312,16 @@ if (jobsList) {
         jobs.forEach(job => {
             const div = document.createElement("div");
             div.className = "rider-card";
+
+            const tipPre = job.tip_pre || 0;
+            const estPayout = job.estimatedPayout || null;
+
             div.innerHTML = `
                 <strong>${job.item}</strong><br>
                 Pickup: ${job.store}<br>
                 Dropoff: ${job.dropoff}<br>
+                ${tipPre ? `Tip (pre): $${tipPre}<br>` : ""}
+                ${estPayout ? `Est. Payout: $${estPayout.toFixed ? estPayout.toFixed(2) : estPayout}<br>` : ""}
                 <button class="primary-btn" onclick="acceptJob('${job.id}')">Accept Job</button>
             `;
             jobsList.appendChild(div);
@@ -279,6 +334,7 @@ if (jobsList) {
 
 async function acceptJob(jobId) {
     const rider = getSession("rider");
+    if (!rider) return window.location.href = "/pages/rider/signup.html";
 
     const res = await fetch("/api/rider/accept", {
         method: "POST",
@@ -330,6 +386,7 @@ if (pickupForm) {
 
         const jobId = getQueryParam("id");
         const file = $("pickupPhoto").files[0];
+        if (!file) return alert("Upload a pickup photo.");
 
         const formData = new FormData();
         formData.append("photo", file);
@@ -358,6 +415,7 @@ if (dropoffForm) {
 
         const jobId = getQueryParam("id");
         const file = $("dropoffPhoto").files[0];
+        if (!file) return alert("Upload a dropoff photo.");
 
         const formData = new FormData();
         formData.append("photo", file);
