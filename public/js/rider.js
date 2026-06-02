@@ -1,185 +1,83 @@
-// FAST ROLL — Rider Dashboard Logic
-// Connected to: app.js (session), worker API, database
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rider Dashboard — The Fast Roll</title>
 
-const KEY = "fastRollRiderSystem";
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
 
-// Load + Save (local fallback)
-function loadStore() {
-    return JSON.parse(localStorage.getItem(KEY)) || {
-        riders: [],
-        jobs: [],
-        reviews: [],
-        orders: []
-    };
-}
-function saveStore(data) {
-    localStorage.setItem(KEY, JSON.stringify(data));
-}
+<body>
 
-// Get rider from session
-function getCurrentRider() {
-    const rider = getSession("rider");
-    if (!rider) return null;
-    return rider;
-}
+<nav class="nav">
+    <div class="logo">
+        <img src="/img/Fast-logo.png" class="logo-img" alt="The Fast Roll Logo" />
+    </div>
 
-// Render profile
-function renderRiderProfile(riderData) {
-    const el = document.getElementById("riderProfileSummary");
-    if (!el) return;
+    <div class="nav-links">
+        <a href="/index.html#how">How It Works</a>
+        <a href="/index.html#order">Order</a>
+        <a href="/index.html#riders">Riders</a>
+    </div>
+</nav>
 
-    el.innerHTML = `
-        <strong>${riderData.name}</strong><br>
-        Vehicle: ${riderData.vehicle || "N/A"}<br>
-        PayPal: ${riderData.paypal || "N/A"}<br>
-        Deliveries: ${riderData.totalDeliveries || 0}<br>
-        Avg Speed: ${riderData.avgSpeed ? riderData.avgSpeed.toFixed(1) : 0} min<br>
-        Bad Reviews: ${riderData.badReviews || 0}<br>
-        Status: ${riderData.suspended ? "Suspended" : "Active"}
-    `;
-}
+<div class="form-wrapper">
+    <h1>Rider Dashboard</h1>
+    <p>Your zone, your jobs, your tools — all in one place.</p>
 
-// Load jobs from worker
-async function loadJobsFromAPI(riderId) {
-    try {
-        const res = await fetch(`/api/rider/jobs?riderId=${riderId}`);
-        if (!res.ok) throw new Error("API failed");
-        return await res.json();
-    } catch (err) {
-        const store = loadStore();
-        return store.jobs.filter(j => j.status === "open");
-    }
-}
+    <!-- MAP + RADIUS -->
+    <div class="form-group">
+        <label>Your Beltline Radius</label>
+        <div id="mapContainer" class="rider-card" style="height:260px;">
+            <p style="opacity:0.6; font-size:0.9rem;">
+                Map will load here once your engine is connected.
+            </p>
+        </div>
 
-// Render available jobs
-async function renderAvailableJobs(rider) {
-    const jobList = document.getElementById("jobList");
-    if (!jobList) return;
+        <div style="margin-top:10px;">
+            <label>Radius (miles)</label>
+            <input type="range" id="radiusSlider" min="0.5" max="5" step="0.5" value="1.5" />
+            <span id="radiusValue">1.5 mi</span>
+        </div>
+    </div>
 
-    const jobs = await loadJobsFromAPI(rider.id);
-
-    jobList.innerHTML = "";
-
-    if (rider.suspended) {
-        jobList.innerHTML = `<div class="rider-card">Your account is suspended.</div>`;
-        return;
-    }
-
-    if (!jobs.length) {
-        jobList.innerHTML = `<div class="rider-card">No jobs available.</div>`;
-        return;
-    }
-
-    jobs.forEach(job => {
-        const div = document.createElement("div");
-        div.className = "rider-card";
-        div.innerHTML = `
-            <strong>${job.pickup} → ${job.dropoff}</strong><br>
-            Payout: $${job.payout}<br><br>
-            <button class="primary-btn" onclick="acceptJobAPI('${job.id}')">
-                Accept Job
-            </button>
-        `;
-        jobList.appendChild(div);
-    });
-}
-
-// Accept job via worker
-async function acceptJobAPI(jobId) {
-    const rider = getCurrentRider();
-    if (!rider) return location.href = "/pages/rider/signup.html";
-
-    const res = await fetch("/api/rider/accept", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jobId, riderId: rider.id })
-    });
-
-    if (!res.ok) return alert("Job already taken.");
-
-    location.reload();
-}
-
-// Load active job
-async function loadActiveJob(riderId) {
-    try {
-        const res = await fetch(`/api/rider/active?riderId=${riderId}`);
-        if (!res.ok) throw new Error("API failed");
-        return await res.json();
-    } catch (err) {
-        const store = loadStore();
-        return store.jobs.find(j => j.status === "active" && j.riderName === riderId);
-    }
-}
-
-// Render active delivery
-async function renderActiveDelivery(rider) {
-    const el = document.getElementById("activeDelivery");
-    if (!el) return;
-
-    const job = await loadActiveJob(rider.id);
-
-    if (!job) {
-        el.innerHTML = "No active delivery.";
-        return;
-    }
-
-    const elapsed = Math.round((Date.now() - job.pickupTime) / 60000);
-
-    el.innerHTML = `
-        <strong>${job.pickup} → ${job.dropoff}</strong><br>
-        Time: ${elapsed} min<br><br>
-
-        <label>Pickup Photo</label>
-        <input type="file" id="pickupPhoto" accept="image/*"><br><br>
-
-        <label>Dropoff Photo</label>
-        <input type="file" id="dropoffPhoto" accept="image/*"><br><br>
-
-        <button class="primary-btn" onclick="sendPickupPhoto('${job.id}')">
-            Mark Picked Up
+    <!-- PROFILE -->
+    <div class="form-group">
+        <label>Your Profile</label>
+        <div id="riderProfileSummary" class="form-note"></div>
+        <button class="secondary-btn" onclick="location.href='/pages/rider/profile.html'">
+            Edit Profile
         </button>
+    </div>
 
-        <button class="primary-btn" onclick="sendDropoffPhoto('${job.id}')">
-            Mark Delivered
+    <!-- JOBS -->
+    <div class="form-group">
+        <label>Available Jobs</label>
+        <div id="jobList" class="rider-grid"></div>
+    </div>
+
+    <!-- ACTIVE DELIVERY -->
+    <div class="form-group">
+        <label>Active Delivery</label>
+        <div id="activeDelivery" class="rider-card">No active delivery.</div>
+    </div>
+
+    <!-- SAFETY -->
+    <div class="form-group">
+        <label>Safety & Status</label>
+        <div id="riderStatus" class="form-note"></div>
+        <button class="secondary-btn" onclick="location.href='/pages/rider/agreement.html'">
+            View Rider Agreement
         </button>
-    `;
-}
+    </div>
 
-// Upload pickup photo
-async function sendPickupPhoto(jobId) {
-    const file = document.getElementById("pickupPhoto").files[0];
-    if (!file) return alert("Upload a pickup photo.");
+    <button class="secondary-btn" onclick="location.href='/index.html'">
+        Log Out
+    </button>
+</div>
 
-    const formData = new FormData();
-    formData.append("photo", file);
-    formData.append("jobId", jobId);
-
-    await fetch("/api/rider/pickup", { method: "POST", body: formData });
-    location.reload();
-}
-
-// Upload dropoff photo
-async function sendDropoffPhoto(jobId) {
-    const file = document.getElementById("dropoffPhoto").files[0];
-    if (!file) return alert("Upload a dropoff photo.");
-
-    const formData = new FormData();
-    formData.append("photo", file);
-    formData.append("jobId", jobId);
-
-    await fetch("/api/rider/dropoff", { method: "POST", body: formData });
-    location.href = "/pages/client/success.html";
-}
-
-// INIT
-document.addEventListener("DOMContentLoaded", async () => {
-    if (!location.pathname.includes("dashboard.html")) return;
-
-    const rider = getCurrentRider();
-    if (!rider) return location.href = "/pages/rider/signup.html";
-
-    renderRiderProfile(rider);
-    await renderAvailableJobs(rider);
-    await renderActiveDelivery(rider);
-});
+<script src="/js/app.js"></script>
+<script src="/js/rider.js"></script>
+</body>
+</html>
