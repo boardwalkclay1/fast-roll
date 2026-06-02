@@ -1,24 +1,26 @@
 // FAST ROLL — Client System
-// Clean, simple, and fully compatible with rider.js
+// Clean, synced with rider.js + admin.js
 
-const KEY = "fastRollRiderSystem";
+const CLIENT_KEY = "fastRollRiderSystem";
 
-// Load + Save
-function load() {
-    return JSON.parse(localStorage.getItem(KEY)) || {
-        riders: [],
-        jobs: [],
-        reviews: [],
-        orders: []
+// Load + Save (shared store, but client‑scoped helpers)
+function loadClientStore() {
+    const base = JSON.parse(localStorage.getItem(CLIENT_KEY)) || {};
+    return {
+        riders: base.riders || [],
+        jobs: base.jobs || [],
+        reviews: base.reviews || [],
+        orders: base.orders || []
     };
 }
-function save(data) {
-    localStorage.setItem(KEY, JSON.stringify(data));
+
+function saveClientStore(data) {
+    localStorage.setItem(CLIENT_KEY, JSON.stringify(data));
 }
 
 // Create a new order
 function createOrder(clientName, item, store, receiptFile) {
-    const data = load();
+    const data = loadClientStore();
 
     const orderId = "ORD" + Date.now();
     const jobId = "JOB" + Date.now();
@@ -36,61 +38,34 @@ function createOrder(clientName, item, store, receiptFile) {
 
     data.orders.push(order);
 
-    // Create a job for riders
     data.jobs.push({
         id: jobId,
         pickup: store,
         dropoff: clientName + " (client)",
-        payout: 5, // base payout, rider keeps 75%
+        payout: 5,
         status: "open",
         riderName: null,
         pickupTime: null,
         dropoffTime: null
     });
 
-    save(data);
+    saveClientStore(data);
+
+    // also store in session for tip / success page if app.js is present
+    if (typeof saveSession === "function") {
+        saveSession("order", order);
+    }
+
     return orderId;
 }
 
 // Get order status
 function getOrderStatus(orderId) {
-    const data = load();
+    const data = loadClientStore();
     return data.orders.find(o => o.id === orderId) || null;
 }
 
-// Update order when rider accepts job
-function linkOrderToRider(jobId, riderName) {
-    const data = load();
-    const order = data.orders.find(o => o.jobId === jobId);
-    if (!order) return;
-
-    order.riderName = riderName;
-    order.status = "accepted";
-
-    save(data);
-}
-
-// Update order when picked up
-function markOrderPickedUp(jobId) {
-    const data = load();
-    const order = data.orders.find(o => o.jobId === jobId);
-    if (!order) return;
-
-    order.status = "picked_up";
-    save(data);
-}
-
-// Update order when delivered
-function markOrderDelivered(jobId) {
-    const data = load();
-    const order = data.orders.find(o => o.jobId === jobId);
-    if (!order) return;
-
-    order.status = "delivered";
-    save(data);
-}
-
-// Render order confirmation page
+// Render order page
 function initOrderPage() {
     const form = document.getElementById("clientOrderForm");
     if (!form) return;
@@ -98,10 +73,15 @@ function initOrderPage() {
     form.addEventListener("submit", e => {
         e.preventDefault();
 
-        const clientName = document.getElementById("clientName").value;
-        const item = document.getElementById("itemName").value;
-        const store = document.getElementById("storeName").value;
-        const receipt = document.getElementById("receiptUpload").files[0];
+        const clientName = document.getElementById("clientName").value.trim();
+        const item = document.getElementById("itemName").value.trim();
+        const store = document.getElementById("storeName").value.trim();
+        const receipt = document.getElementById("receiptUpload").files[0] || null;
+
+        if (!clientName || !item || !store) {
+            alert("Fill out all fields.");
+            return;
+        }
 
         const orderId = createOrder(clientName, item, store, receipt);
 
@@ -120,7 +100,12 @@ function initOrderStatusPage() {
     form.addEventListener("submit", e => {
         e.preventDefault();
 
-        const orderId = document.getElementById("orderIdLookup").value;
+        const orderId = document.getElementById("orderIdLookup").value.trim();
+        if (!orderId) {
+            result.innerHTML = "Enter an order ID.";
+            return;
+        }
+
         const order = getOrderStatus(orderId);
 
         if (!order) {
@@ -132,11 +117,13 @@ function initOrderStatusPage() {
             <strong>Order ID:</strong> ${order.id}<br>
             <strong>Status:</strong> ${order.status}<br>
             <strong>Rider:</strong> ${order.riderName || "Not assigned yet"}<br><br>
-            ${order.status === "delivered" ? `
-                <button class="primary-btn" onclick="location.href='/pages/client/review.html'">
-                    Leave Review
-                </button>
-            ` : ""}
+            ${
+                order.status === "delivered"
+                    ? `<button class="primary-btn" onclick="location.href='/pages/client/success.html'">
+                           Delivery Complete — Continue
+                       </button>`
+                    : ""
+            }
         `;
     });
 }
