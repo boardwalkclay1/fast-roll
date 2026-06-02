@@ -1,32 +1,37 @@
 // FAST ROLL — Client System
-// Clean, synced with rider.js + admin.js
+// Clean, synced with rider.js + admin.js + app.js
 
-const CLIENT_KEY = "fastRollRiderSystem";
+const KEY = "fastRollRiderSystem";
 
-// Load + Save (shared store, but client‑scoped helpers)
-function loadClientStore() {
-    const base = JSON.parse(localStorage.getItem(CLIENT_KEY)) || {};
+// Load + Save (shared store)
+function loadStore() {
+    const base = JSON.parse(localStorage.getItem(KEY)) || {};
     return {
         riders: base.riders || [],
         jobs: base.jobs || [],
         reviews: base.reviews || [],
-        orders: base.orders || []
+        orders: base.orders || [],
+        clientProfiles: base.clientProfiles || []
     };
 }
 
-function saveClientStore(data) {
-    localStorage.setItem(CLIENT_KEY, JSON.stringify(data));
+function saveStore(data) {
+    localStorage.setItem(KEY, JSON.stringify(data));
 }
 
-// Create a new order
-function createOrder(clientName, item, store, receiptFile) {
-    const data = loadClientStore();
+/* ============================================================
+   CREATE ORDER
+   ============================================================ */
+
+function createOrder(clientId, clientName, item, store, receiptFile) {
+    const data = loadStore();
 
     const orderId = "ORD" + Date.now();
     const jobId = "JOB" + Date.now();
 
     const order = {
         id: orderId,
+        clientId,
         clientName,
         item,
         store,
@@ -49,9 +54,9 @@ function createOrder(clientName, item, store, receiptFile) {
         dropoffTime: null
     });
 
-    saveClientStore(data);
+    saveStore(data);
 
-    // also store in session for tip / success page if app.js is present
+    // Save to session for success page
     if (typeof saveSession === "function") {
         saveSession("order", order);
     }
@@ -59,16 +64,25 @@ function createOrder(clientName, item, store, receiptFile) {
     return orderId;
 }
 
-// Get order status
+/* ============================================================
+   GET ORDER STATUS
+   ============================================================ */
+
 function getOrderStatus(orderId) {
-    const data = loadClientStore();
+    const data = loadStore();
     return data.orders.find(o => o.id === orderId) || null;
 }
 
-// Render order page
+/* ============================================================
+   ORDER PAGE
+   ============================================================ */
+
 function initOrderPage() {
     const form = document.getElementById("clientOrderForm");
     if (!form) return;
+
+    const client = getSession("client");
+    if (!client) return location.href = "/pages/client/signup.html";
 
     form.addEventListener("submit", e => {
         e.preventDefault();
@@ -83,14 +97,17 @@ function initOrderPage() {
             return;
         }
 
-        const orderId = createOrder(clientName, item, store, receipt);
+        const orderId = createOrder(client.id, clientName, item, store, receipt);
 
         alert("Order created! Your order ID is: " + orderId);
         form.reset();
     });
 }
 
-// Render order status page
+/* ============================================================
+   ORDER STATUS PAGE
+   ============================================================ */
+
 function initOrderStatusPage() {
     const form = document.getElementById("orderStatusForm");
     const result = document.getElementById("orderStatusResult");
@@ -117,6 +134,7 @@ function initOrderStatusPage() {
             <strong>Order ID:</strong> ${order.id}<br>
             <strong>Status:</strong> ${order.status}<br>
             <strong>Rider:</strong> ${order.riderName || "Not assigned yet"}<br><br>
+
             ${
                 order.status === "delivered"
                     ? `<button class="primary-btn" onclick="location.href='/pages/client/success.html'">
@@ -128,7 +146,10 @@ function initOrderStatusPage() {
     });
 }
 
-// Router
+/* ============================================================
+   ROUTER
+   ============================================================ */
+
 document.addEventListener("DOMContentLoaded", () => {
     const path = window.location.pathname;
 
