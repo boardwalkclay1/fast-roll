@@ -1,83 +1,230 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rider Dashboard — The Fast Roll</title>
+// FAST ROLL — Rider Dashboard Logic
+// Clean, modular, synced with app.js + worker + DB
 
-    <link rel="stylesheet" href="/css/style.css" />
-</head>
+const KEY = "fastRollRiderSystem";
 
-<body>
+/* ============================================================
+   LOAD + SAVE
+   ============================================================ */
+function loadStore() {
+    return JSON.parse(localStorage.getItem(KEY)) || {
+        riders: [],
+        jobs: [],
+        reviews: [],
+        orders: []
+    };
+}
 
-<nav class="nav">
-    <div class="logo">
-        <img src="/img/Fast-logo.png" class="logo-img" alt="The Fast Roll Logo" />
-    </div>
+function saveStore(data) {
+    localStorage.setItem(KEY, JSON.stringify(data));
+}
 
-    <div class="nav-links">
-        <a href="/index.html#how">How It Works</a>
-        <a href="/index.html#order">Order</a>
-        <a href="/index.html#riders">Riders</a>
-    </div>
-</nav>
+/* ============================================================
+   SESSION RIDER
+   ============================================================ */
+function getCurrentRider() {
+    return getSession("rider") || null;
+}
 
-<div class="form-wrapper">
-    <h1>Rider Dashboard</h1>
-    <p>Your zone, your jobs, your tools — all in one place.</p>
+/* ============================================================
+   PROFILE RENDER
+   ============================================================ */
+function renderRiderProfile(rider) {
+    const el = document.getElementById("riderProfileSummary");
+    const statusEl = document.getElementById("riderStatus");
+    if (!el || !statusEl) return;
 
-    <!-- MAP + RADIUS -->
-    <div class="form-group">
-        <label>Your Beltline Radius</label>
-        <div id="mapContainer" class="rider-card" style="height:260px;">
-            <p style="opacity:0.6; font-size:0.9rem;">
-                Map will load here once your engine is connected.
-            </p>
-        </div>
+    el.innerHTML = `
+        <strong>${rider.name}</strong><br>
+        Vehicle: ${rider.vehicle || "N/A"}<br>
+        PayPal: ${rider.paypal || "N/A"}<br>
+        Deliveries: ${rider.totalDeliveries || 0}<br>
+        Avg Speed: ${rider.avgSpeed ? rider.avgSpeed.toFixed(1) : 0} min<br>
+        Bad Reviews: ${rider.badReviews || 0}
+    `;
 
-        <div style="margin-top:10px;">
-            <label>Radius (miles)</label>
-            <input type="range" id="radiusSlider" min="0.5" max="5" step="0.5" value="1.5" />
-            <span id="radiusValue">1.5 mi</span>
-        </div>
-    </div>
+    statusEl.innerHTML = rider.suspended
+        ? "Status: Suspended — pending admin review."
+        : "Status: Active — You ride at your own risk. The Fast Roll is a connector, not a carrier.";
+}
 
-    <!-- PROFILE -->
-    <div class="form-group">
-        <label>Your Profile</label>
-        <div id="riderProfileSummary" class="form-note"></div>
-        <button class="secondary-btn" onclick="location.href='/pages/rider/profile.html'">
-            Edit Profile
-        </button>
-    </div>
+/* ============================================================
+   RADIUS CONTROL
+   ============================================================ */
+function initRadius(rider) {
+    const slider = document.getElementById("radiusSlider");
+    const valueEl = document.getElementById("radiusValue");
+    if (!slider || !valueEl) return;
 
-    <!-- JOBS -->
-    <div class="form-group">
-        <label>Available Jobs</label>
-        <div id="jobList" class="rider-grid"></div>
-    </div>
+    slider.value = rider.radiusMiles || 1.5;
+    valueEl.textContent = `${slider.value} mi`;
 
-    <!-- ACTIVE DELIVERY -->
-    <div class="form-group">
-        <label>Active Delivery</label>
-        <div id="activeDelivery" class="rider-card">No active delivery.</div>
-    </div>
+    slider.addEventListener("input", () => {
+        valueEl.textContent = `${slider.value} mi`;
 
-    <!-- SAFETY -->
-    <div class="form-group">
-        <label>Safety & Status</label>
-        <div id="riderStatus" class="form-note"></div>
-        <button class="secondary-btn" onclick="location.href='/pages/rider/agreement.html'">
-            View Rider Agreement
-        </button>
-    </div>
+        const data = loadStore();
+        const rec = data.riders.find(r => r.id === rider.id);
+        if (rec) {
+            rec.radiusMiles = parseFloat(slider.value);
+            saveStore(data);
+        }
 
-    <button class="secondary-btn" onclick="location.href='/index.html'">
-        Log Out
-    </button>
-</div>
+        if (window.FastRollMap?.updateRadius) {
+            window.FastRollMap.updateRadius(parseFloat(slider.value));
+        }
+    });
+}
 
-<script src="/js/app.js"></script>
-<script src="/js/rider.js"></script>
-</body>
-</html>
+/* ============================================================
+   JOBS
+   ============================================================ */
+async function loadJobs(rider) {
+    const jobList = document.getElementById("jobList");
+    if (!jobList) return;
+
+    const data = loadStore();
+    const jobs = data.jobs.filter(j => j.status === "open");
+
+    jobList.innerHTML = "";
+
+    if (rider.suspended) {
+        jobList.innerHTML = `<div class="rider-card">Your account is suspended.</div>`;
+        return;
+    }
+
+    if (!jobs.length) {
+        jobList.innerHTML = `<div class="rider-card">No jobs available.</div>`;
+        return;
+    }
+
+    jobs.forEach(job => {
+        const div = document.createElement("div");
+        div.className = "rider-card";
+        div.innerHTML = `
+            <strong>${job.pickup} → ${job.dropoff}</strong><br>
+            Payout: $${job.payout}<br><br>
+            <button class="primary-btn" data-job="${job.id}">
+                Accept Job
+            </button>
+        `;
+        jobList.appendChild(div);
+    });
+
+    jobList.querySelectorAll("button[data-job]").forEach(btn => {
+        btn.onclick = () => acceptJob(btn.getAttribute("data-job"), rider);
+    });
+}
+
+function acceptJob(jobId, rider) {
+    const data = loadStore();
+    const job = data.jobs.find(j => j.id === jobId);
+    if (!job) return;
+
+    job.status = "active";
+    job.riderName = rider.name;
+    job.pickupTime = Date.now();
+
+    const order = data.orders.find(o => o.jobId === job.id);
+    if (order) {
+        order.riderName = rider.name;
+        order.status = "accepted";
+    }
+
+    saveStore(data);
+    renderActiveDelivery(rider);
+    loadJobs(rider);
+}
+
+/* ============================================================
+   ACTIVE DELIVERY
+   ============================================================ */
+function renderActiveDelivery(rider) {
+    const el = document.getElementById("activeDelivery");
+    if (!el) return;
+
+    const data = loadStore();
+    const job = data.jobs.find(j => j.status === "active" && j.riderName === rider.name);
+
+    if (!job) {
+        el.innerHTML = "No active delivery.";
+        return;
+    }
+
+    const elapsed = Math.round((Date.now() - job.pickupTime) / 60000);
+
+    el.innerHTML = `
+        <strong>${job.pickup} → ${job.dropoff}</strong><br>
+        Time: ${elapsed} min<br><br>
+
+        <label>Pickup Photo</label>
+        <input type="file" id="pickupPhoto" accept="image/*"><br><br>
+
+        <label>Dropoff Photo</label>
+        <input type="file" id="dropoffPhoto" accept="image/*"><br><br>
+
+        <button class="primary-btn" id="pickupBtn">Mark Picked Up</button>
+        <button class="primary-btn" id="dropoffBtn">Mark Delivered</button>
+    `;
+
+    document.getElementById("pickupBtn").onclick = () => markPickedUp(job.id);
+    document.getElementById("dropoffBtn").onclick = () => markDelivered(job.id, rider);
+}
+
+function markPickedUp(jobId) {
+    const data = loadStore();
+    const job = data.jobs.find(j => j.id === jobId);
+    if (!job) return;
+
+    job.pickupTime = Date.now();
+
+    const order = data.orders.find(o => o.jobId === job.id);
+    if (order) order.status = "picked_up";
+
+    saveStore(data);
+    location.reload();
+}
+
+function markDelivered(jobId, rider) {
+    const data = loadStore();
+    const job = data.jobs.find(j => j.id === jobId);
+    if (!job) return;
+
+    job.dropoffTime = Date.now();
+    job.status = "completed";
+
+    const minutes = Math.max(1, Math.round((job.dropoffTime - job.pickupTime) / 60000));
+
+    const rec = data.riders.find(r => r.id === rider.id);
+    if (rec) {
+        rec.totalDeliveries += 1;
+        rec.avgSpeed =
+            rec.avgSpeed === 0
+                ? minutes
+                : (rec.avgSpeed * (rec.totalDeliveries - 1) + minutes) / rec.totalDeliveries;
+    }
+
+    const order = data.orders.find(o => o.jobId === job.id);
+    if (order) order.status = "delivered";
+
+    saveStore(data);
+    location.href = "/pages/client/success.html";
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+document.addEventListener("DOMContentLoaded", () => {
+    if (!location.pathname.includes("dashboard.html")) return;
+
+    const rider = getCurrentRider();
+    if (!rider) return (location.href = "/pages/rider/signup.html");
+
+    renderRiderProfile(rider);
+    initRadius(rider);
+    loadJobs(rider);
+    renderActiveDelivery(rider);
+
+    if (window.FastRollMap?.init) {
+        window.FastRollMap.init("mapContainer", rider);
+    }
+});
