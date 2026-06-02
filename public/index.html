@@ -12,8 +12,8 @@
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <link rel="manifest" href="manifest.webmanifest" />
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="stylesheet" href="/css/style.css" />
 </head>
 
 <body>
@@ -38,8 +38,8 @@
             <p>Skaters, longboarders, e‑bikes & OneWheels delivering small items right off the Atlanta Beltline.</p>
 
             <div class="hero-buttons">
-                <button id="orderBtn" class="primary-btn">Order Delivery</button>
-                <button id="riderBtn" class="secondary-btn">Become a Rider</button>
+                <button onclick="location.href='/pages/order/index.html'" class="primary-btn">Order Delivery</button>
+                <button onclick="location.href='/pages/rider/signup.html'" class="secondary-btn">Become a Rider</button>
             </div>
         </div>
     </section>
@@ -90,7 +90,7 @@
         <div class="order-panel">
             <h3>Order a Beltline Delivery</h3>
             <p>We currently support small, low‑risk items under $20 from shops directly off the Beltline.</p>
-            <button id="orderPanelBtn" class="primary-btn">Start Order</button>
+            <button onclick="location.href='/pages/order/index.html'" class="primary-btn">Start Order</button>
         </div>
     </section>
 
@@ -112,7 +112,7 @@
         </div>
 
         <div style="margin-top:24px;">
-            <button id="joinRiders" class="primary-btn">Join The Fast Roll</button>
+            <button onclick="location.href='/pages/rider/signup.html'" class="primary-btn">Join The Fast Roll</button>
         </div>
     </section>
 
@@ -120,6 +120,6 @@
         <p>© 2026 The Fast Roll — Built for the Atlanta Beltline</p>
     </footer>
 
-    <script src="js/app.js"></script>
+    <script src="/js/app.js"></script>
 </body>
 </html>
