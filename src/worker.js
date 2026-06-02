@@ -17,6 +17,32 @@ export default {
     const parseForm = async (req) => await req.formData();
     const uuid = () => crypto.randomUUID();
 
+    // simple fee + weight helpers (distance can be added later)
+    const getBaseLimits = () => ({
+      maxValue: 50,   // starter limit
+      maxWeight: 8    // starter weight limit (lbs)
+    });
+
+    const calculateExtraWeightFee = (weight, maxWeight) => {
+      if (!weight || weight <= maxWeight) return 0;
+      const extra = weight - maxWeight;
+      return extra * 1.5; // $1.50 per extra lb
+    };
+
+    const calculateDeliveryFee = (value, extraWeightFee) => {
+      const base = 5;              // base fee
+      const valueComponent = value * 0.2; // simple value-based component
+      return base + valueComponent + extraWeightFee;
+    };
+
+    const calculateRiderPayout = (order) => {
+      const deliveryFee = order.delivery_fee || 0;
+      const extraWeightFee = order.extra_weight_fee || 0;
+      const tipPre = order.tip_pre || 0;
+      const tipPost = order.tip_post || 0;
+      return (deliveryFee * 0.7) + extraWeightFee + tipPre + tipPost;
+    };
+
     /* ---------------------------------------------------------
        CLIENT SIGNUP
     --------------------------------------------------------- */
@@ -54,18 +80,58 @@ export default {
     }
 
     /* ---------------------------------------------------------
-       CLIENT ORDER CREATION
+       CLIENT ORDER CREATION (value + weight + tip_pre)
     --------------------------------------------------------- */
     if (path === "/api/client/order" && method === "POST") {
-      const { clientId, item, store, dropoff, value } = await parseJSON(request);
+      const { clientId, item, store, dropoff, value, weight, tipPre } = await parseJSON(request);
 
       const id = uuid();
-      await env.DB.prepare(
-        `INSERT INTO orders (id, client_id, item, store, dropoff, value, status)
-         VALUES (?, ?, ?, ?, ?, ?, 'pending_receipt')`
-      ).bind(id, clientId, item, store, dropoff, value).run();
+      const numericValue = Number(value || 0);
+      const numericWeight = Number(weight || 0);
+      const numericTipPre = Number(tipPre || 0);
 
-      return json({ id, clientId, item, store, dropoff, value, status: "pending_receipt" });
+      const limits = getBaseLimits();
+
+      if (numericValue > limits.maxValue) {
+        return json({ error: "Item value exceeds current limit." }, 400);
+      }
+
+      const extraWeightFee = calculateExtraWeightFee(numericWeight, limits.maxWeight);
+      const deliveryFee = calculateDeliveryFee(numericValue, extraWeightFee);
+
+      await env.DB.prepare(
+        `INSERT INTO orders (
+           id, client_id, item, store, dropoff,
+           value, weight, tip_pre, tip_post,
+           extra_weight_fee, delivery_fee, status
+         )
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, 'pending_receipt')`
+      ).bind(
+        id,
+        clientId,
+        item,
+        store,
+        dropoff,
+        numericValue,
+        numericWeight,
+        numericTipPre,
+        extraWeightFee,
+        deliveryFee
+      ).run();
+
+      return json({
+        id,
+        clientId,
+        item,
+        store,
+        dropoff,
+        value: numericValue,
+        weight: numericWeight,
+        tipPre: numericTipPre,
+        extraWeightFee,
+        deliveryFee,
+        status: "pending_receipt"
+      });
     }
 
     /* ---------------------------------------------------------
@@ -122,6 +188,20 @@ export default {
     }
 
     /* ---------------------------------------------------------
+       CLIENT TIP AFTER DELIVERY
+    --------------------------------------------------------- */
+    if (path === "/api/client/tip-post" && method === "POST") {
+      const { orderId, tipPost } = await parseJSON(request);
+      const numericTipPost = Number(tipPost || 0);
+
+      await env.DB.prepare(
+        `UPDATE orders SET tip_post = COALESCE(tip_post, 0) + ? WHERE id = ?`
+      ).bind(numericTipPost, orderId).run();
+
+      return json({ success: true });
+    }
+
+    /* ---------------------------------------------------------
        RIDER SIGNUP
     --------------------------------------------------------- */
     if (path === "/api/rider/signup" && method === "POST") {
@@ -158,17 +238,41 @@ export default {
     }
 
     /* ---------------------------------------------------------
-       RIDER JOB LIST
+       RIDER JOB LIST (include tip_pre + estimated payout)
     --------------------------------------------------------- */
     if (path === "/api/rider/jobs" && method === "GET") {
       const jobs = await env.DB.prepare(
-        `SELECT o.id, o.item, o.store, o.dropoff
+        `SELECT
+           o.id,
+           o.item,
+           o.store,
+           o.dropoff,
+           o.tip_pre,
+           o.delivery_fee,
+           o.extra_weight_fee
          FROM orders o
          LEFT JOIN jobs j ON j.order_id = o.id
          WHERE o.status = 'waiting_rider' AND j.id IS NULL`
       ).all();
 
-      return json(jobs.results || []);
+      const results = (jobs.results || []).map((o) => {
+        const payout = calculateRiderPayout({
+          delivery_fee: o.delivery_fee || 0,
+          extra_weight_fee: o.extra_weight_fee || 0,
+          tip_pre: o.tip_pre || 0,
+          tip_post: 0
+        });
+        return {
+          id: o.id,
+          item: o.item,
+          store: o.store,
+          dropoff: o.dropoff,
+          tip_pre: o.tip_pre || 0,
+          estimatedPayout: payout
+        };
+      });
+
+      return json(results);
     }
 
     /* ---------------------------------------------------------
@@ -268,6 +372,7 @@ export default {
         `UPDATE orders SET status = 'delivered' WHERE id = ?`
       ).bind(jobId).run();
 
+      // here you can later call PayPal payouts using calculateRiderPayout(order)
       return json({ success: true });
     }
 
