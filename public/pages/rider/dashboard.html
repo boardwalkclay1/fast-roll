@@ -5,30 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rider Dashboard — The Fast Roll</title>
 
-    <meta property="og:title" content="Rider Dashboard — The Fast Roll" />
-    <meta property="og:image" content="../../public/img/fast-index.jpg" />
-
-    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="/css/style.css" />
 </head>
 
 <body>
 
-    <nav class="nav">
-        <div class="logo">THE FAST ROLL</div>
-        <div class="nav-links">
-            <a href="../../index.html">Home</a>
+<nav class="nav">
+    <div class="logo">
+        <img src="/img/Fast-logo.png" class="logo-img" alt="The Fast Roll Logo" />
+    </div>
+
+    <div class="nav-links">
+        <a href="/index.html#how">How It Works</a>
+        <a href="/index.html#order">Order</a>
+        <a href="/index.html#riders">Riders</a>
+    </div>
+</nav>
+
+<div class="form-wrapper">
+    <h1>Rider Dashboard</h1>
+    <p>Your deliveries, stats, and safety tools.</p>
+
+    <!-- Rider profile summary -->
+    <div class="form-group">
+        <label>Profile</label>
+        <div id="riderProfileSummary" class="form-note">
+            <!-- Filled by JS -->
         </div>
-    </nav>
+    </div>
 
-    <section class="section">
-        <h2>Available Jobs</h2>
-        <p class="section-sub">Jobs update automatically every few seconds.</p>
-
-        <div id="jobsList" class="rider-grid">
-            <!-- Jobs injected by JS -->
+    <!-- Available jobs -->
+    <div class="form-group">
+        <label>Available Jobs</label>
+        <div id="jobList" class="rider-grid">
+            <!-- Filled by JS -->
         </div>
-    </section>
+    </div>
 
-    <script src="../../js/app.js"></script>
+    <!-- Active delivery -->
+    <div class="form-group">
+        <label>Active Delivery</label>
+        <div id="activeDelivery" class="rider-card">
+            No active delivery.
+        </div>
+    </div>
+
+    <!-- Safety / status -->
+    <div class="form-group">
+        <label>Status</label>
+        <div id="riderStatus" class="form-note">
+            <!-- Filled by JS -->
+        </div>
+    </div>
+
+    <button class="secondary-btn" onclick="location.href='/index.html'">
+        Log Out
+    </button>
+</div>
+
+<script src="/js/app.js"></script>
 </body>
 </html>
