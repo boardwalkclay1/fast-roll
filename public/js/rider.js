@@ -1,5 +1,5 @@
 // FAST ROLL — Rider System
-// Clean, modular, no unnecessary complexity
+// Clean, modular, synced with admin + client data model
 
 const KEY = "fastRollRiderSystem";
 
@@ -8,9 +8,11 @@ function load() {
     return JSON.parse(localStorage.getItem(KEY)) || {
         riders: [],
         jobs: [],
-        reviews: []
+        reviews: [],
+        orders: []
     };
 }
+
 function save(data) {
     localStorage.setItem(KEY, JSON.stringify(data));
 }
@@ -35,7 +37,7 @@ function getRider(name) {
     return rider;
 }
 
-// Seed jobs if empty
+// Seed jobs if empty (dev only)
 function seedJobs() {
     const data = load();
     if (data.jobs.length === 0) {
@@ -57,6 +59,13 @@ function acceptJob(jobId, riderName) {
     job.riderName = riderName;
     job.pickupTime = Date.now();
 
+    // Link order if exists
+    const order = data.orders.find(o => o.jobId === job.id);
+    if (order) {
+        order.riderName = riderName;
+        order.status = "accepted";
+    }
+
     save(data);
 }
 
@@ -67,6 +76,12 @@ function markPickedUp(jobId) {
     if (!job) return;
 
     job.pickupTime = Date.now();
+
+    const order = data.orders.find(o => o.jobId === job.id);
+    if (order) {
+        order.status = "picked_up";
+    }
+
     save(data);
 }
 
@@ -74,18 +89,30 @@ function markPickedUp(jobId) {
 function markDelivered(jobId) {
     const data = load();
     const job = data.jobs.find(j => j.id === jobId);
+    if (!job) return;
+
     const rider = data.riders.find(r => r.name === job.riderName);
+    if (!rider) return;
 
     job.dropoffTime = Date.now();
     job.status = "completed";
 
-    const minutes = Math.max(1, Math.round((job.dropoffTime - job.pickupTime) / 60000));
+    const minutes = Math.max(
+        1,
+        Math.round((job.dropoffTime - (job.pickupTime || job.dropoffTime)) / 60000)
+    );
 
-    // Update rider stats
     rider.totalDeliveries += 1;
-    rider.avgSpeed = rider.avgSpeed === 0
-        ? minutes
-        : (rider.avgSpeed * (rider.totalDeliveries - 1) + minutes) / rider.totalDeliveries;
+    rider.avgSpeed =
+        rider.avgSpeed === 0
+            ? minutes
+            : (rider.avgSpeed * (rider.totalDeliveries - 1) + minutes) /
+              rider.totalDeliveries;
+
+    const order = data.orders.find(o => o.jobId === job.id);
+    if (order) {
+        order.status = "delivered";
+    }
 
     save(data);
 }
@@ -97,8 +124,7 @@ function submitReview(riderName, speed, text, complaint) {
 
     data.reviews.push({ riderName, speed, text, complaint });
 
-    // Bad review logic
-    if (speed <= 2 || complaint.length > 0) {
+    if (speed <= 2 || (complaint && complaint.trim().length > 0)) {
         rider.badReviews += 1;
         if (rider.badReviews >= 5) {
             rider.suspended = true;
@@ -112,51 +138,65 @@ function submitReview(riderName, speed, text, complaint) {
 function initDashboard() {
     seedJobs();
 
-    const riderName = localStorage.getItem("currentRiderName") || "Rider";
+    const riderName =
+        (localStorage.getItem("currentRiderName") || "").trim() ||
+        (getSession && getSession("rider")?.name) ||
+        "Rider";
+
     const data = load();
     const rider = getRider(riderName);
 
-    // Profile
-    document.getElementById("riderProfileSummary").innerHTML = `
+    const profileEl = document.getElementById("riderProfileSummary");
+    const jobList = document.getElementById("jobList");
+    const activeDiv = document.getElementById("activeDelivery");
+
+    if (!profileEl || !jobList || !activeDiv) return;
+
+    profileEl.innerHTML = `
         ${rider.name}<br>
         Deliveries: ${rider.totalDeliveries}<br>
-        Avg Speed: ${rider.avgSpeed.toFixed(1)} min<br>
+        Avg Speed: ${rider.avgSpeed ? rider.avgSpeed.toFixed(1) : 0} min<br>
         Bad Reviews: ${rider.badReviews}<br>
         Status: ${rider.suspended ? "Suspended" : "Active"}
     `;
 
-    // Jobs
-    const jobList = document.getElementById("jobList");
     jobList.innerHTML = "";
 
     if (rider.suspended) {
-        jobList.innerHTML = `<div class="rider-card">Your account is suspended pending review.</div>`;
+        jobList.innerHTML =
+            '<div class="rider-card">Your account is suspended pending review.</div>';
+        activeDiv.innerHTML = "No active delivery.";
         return;
     }
 
-    data.jobs.filter(j => j.status === "open").forEach(job => {
-        const div = document.createElement("div");
-        div.className = "rider-card";
-        div.innerHTML = `
-            <strong>${job.pickup} → ${job.dropoff}</strong><br>
-            Payout: $${job.payout}<br><br>
-            <button class="primary-btn" onclick="acceptJob('${job.id}', '${rider.name}'); location.reload();">
-                Accept Job
-            </button>
-        `;
-        jobList.appendChild(div);
-    });
+    data.jobs
+        .filter(j => j.status === "open")
+        .forEach(job => {
+            const div = document.createElement("div");
+            div.className = "rider-card";
+            div.innerHTML = `
+                <strong>${job.pickup} → ${job.dropoff}</strong><br>
+                Payout: $${job.payout}<br><br>
+                <button class="primary-btn"
+                    onclick="acceptJob('${job.id}', '${rider.name}'); location.reload();">
+                    Accept Job
+                </button>
+            `;
+            jobList.appendChild(div);
+        });
 
-    // Active job
-    const active = data.jobs.find(j => j.status === "active" && j.riderName === rider.name);
-    const activeDiv = document.getElementById("activeDelivery");
+    const active = data.jobs.find(
+        j => j.status === "active" && j.riderName === rider.name
+    );
 
     if (!active) {
         activeDiv.innerHTML = "No active delivery.";
         return;
     }
 
-    const elapsed = Math.round((Date.now() - active.pickupTime) / 60000);
+    const elapsed = Math.round(
+        (Date.now() - (active.pickupTime || Date.now())) / 60000
+    );
 
     activeDiv.innerHTML = `
         <strong>${active.pickup} → ${active.dropoff}</strong><br>
@@ -168,11 +208,13 @@ function initDashboard() {
         <label>Dropoff Photo</label>
         <input type="file" accept="image/*"><br><br>
 
-        <button class="primary-btn" onclick="markPickedUp('${active.id}'); location.reload();">
+        <button class="primary-btn"
+            onclick="markPickedUp('${active.id}'); location.reload();">
             Mark Picked Up
         </button>
 
-        <button class="primary-btn" onclick="markDelivered('${active.id}'); location.reload();">
+        <button class="primary-btn"
+            onclick="markDelivered('${active.id}'); location.reload();">
             Mark Delivered
         </button>
     `;
@@ -186,10 +228,20 @@ function initReviewPage() {
     form.addEventListener("submit", e => {
         e.preventDefault();
 
-        const riderName = document.getElementById("reviewRiderName").value;
-        const speed = parseInt(document.getElementById("reviewSpeed").value);
-        const text = document.getElementById("reviewText").value;
-        const complaint = document.getElementById("complaintText").value;
+        const riderName = document.getElementById("reviewRiderName").value.trim();
+        const speed = parseInt(
+            document.getElementById("reviewSpeed").value,
+            10
+        );
+        const text = document.getElementById("reviewText").value.trim();
+        const complaint = document
+            .getElementById("complaintText")
+            .value.trim();
+
+        if (!riderName || !speed) {
+            alert("Rider name and speed rating are required.");
+            return;
+        }
 
         submitReview(riderName, speed, text, complaint);
 
