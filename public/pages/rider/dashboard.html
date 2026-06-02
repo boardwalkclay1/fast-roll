@@ -24,51 +24,51 @@
 
 <div class="form-wrapper">
     <h1>Rider Dashboard</h1>
-    <p>Your zone, your jobs, your safety — all in one place.</p>
+    <p>Your zone, your jobs, your tools — all in one place.</p>
 
-    <!-- Map + radius -->
+    <!-- MAP + RADIUS -->
     <div class="form-group">
         <label>Your Beltline Radius</label>
         <div id="mapContainer" class="rider-card" style="height:260px;">
-            <!-- Map engine will render here -->
-            <p style="font-size:0.9rem; opacity:0.7;">
-                Map loading… once the engine is wired, this will show your live zone and jobs.
+            <p style="opacity:0.6; font-size:0.9rem;">
+                Map will load here once your engine is connected.
             </p>
         </div>
+
         <div style="margin-top:10px;">
-            <label for="radiusSlider">Radius (miles)</label>
+            <label>Radius (miles)</label>
             <input type="range" id="radiusSlider" min="0.5" max="5" step="0.5" value="1.5" />
             <span id="radiusValue">1.5 mi</span>
         </div>
     </div>
 
-    <!-- Rider profile summary -->
+    <!-- PROFILE -->
     <div class="form-group">
-        <label>Profile</label>
+        <label>Your Profile</label>
         <div id="riderProfileSummary" class="form-note"></div>
         <button class="secondary-btn" onclick="location.href='/pages/rider/profile.html'">
             Edit Profile
         </button>
     </div>
 
-    <!-- Available jobs -->
+    <!-- JOBS -->
     <div class="form-group">
-        <label>Available Jobs in Your Radius</label>
+        <label>Available Jobs</label>
         <div id="jobList" class="rider-grid"></div>
     </div>
 
-    <!-- Active delivery -->
+    <!-- ACTIVE DELIVERY -->
     <div class="form-group">
         <label>Active Delivery</label>
         <div id="activeDelivery" class="rider-card">No active delivery.</div>
     </div>
 
-    <!-- Safety / status -->
+    <!-- SAFETY -->
     <div class="form-group">
-        <label>Status & Safety</label>
+        <label>Safety & Status</label>
         <div id="riderStatus" class="form-note"></div>
         <button class="secondary-btn" onclick="location.href='/pages/rider/agreement.html'">
-            View / Sign Rider Agreement
+            View Rider Agreement
         </button>
     </div>
 
@@ -78,6 +78,6 @@
 </div>
 
 <script src="/js/app.js"></script>
-<script src="/js/rider-dashboard.js"></script>
+<script src="/js/rider.js"></script>
 </body>
 </html>
