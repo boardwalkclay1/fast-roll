@@ -4,72 +4,66 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rider Signup — The Fast Roll</title>
-
-    <meta property="og:title" content="Become a Fast Roll Rider" />
-    <meta property="og:image" content="../../public/img/fast-index.jpg" />
-    <meta property="og:description" content="Sign up to deliver on the Atlanta Beltline." />
-
-    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="/css/style.css" />
 </head>
-
 <body>
+<nav class="nav">
+    <div class="logo">
+        <img src="/img/Fast-logo.png" class="logo-img" alt="The Fast Roll Logo" />
+    </div>
+    <div class="nav-links">
+        <a href="/index.html#how">How It Works</a>
+        <a href="/index.html#order">Order</a>
+        <a href="/index.html#riders">Riders</a>
+    </div>
+</nav>
 
-    <nav class="nav">
-        <div class="logo">THE FAST ROLL</div>
-        <div class="nav-links">
-            <a href="../../index.html">Home</a>
+<div class="form-wrapper">
+    <h1>Become a Rider</h1>
+    <p>Longboarders, skaters, e‑bikes, OneWheels — roll the Beltline and get paid.</p>
+
+    <form id="riderSignupForm">
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" id="name" required />
         </div>
-    </nav>
 
-    <main class="form-wrapper">
-        <h1>Become a Rider</h1>
-        <p>Longboard, skate, e‑bike, or OneWheel? Earn fast payouts delivering small items along the Beltline.</p>
+        <div class="form-group">
+            <label>Vehicle</label>
+            <select id="vehicle">
+                <option value="longboard">Longboard</option>
+                <option value="skateboard">Skateboard</option>
+                <option value="ebike">E‑Bike</option>
+                <option value="onewheel">OneWheel</option>
+            </select>
+        </div>
 
-        <form id="riderSignupForm">
+        <div class="form-group">
+            <label>PayPal Email</label>
+            <input type="email" id="paypal" required />
+        </div>
 
-            <div class="form-group">
-                <label for="name">Full Name</label>
-                <input id="name" type="text" placeholder="Your full name" required />
-            </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="password" required />
+        </div>
 
-            <div class="form-group">
-                <label for="vehicle">What do you ride?</label>
-                <select id="vehicle" required>
-                    <option value="">Select one</option>
-                    <option value="longboard">Longboard</option>
-                    <option value="skateboard">Skateboard</option>
-                    <option value="ebike">Electric Bike</option>
-                    <option value="onewheel">OneWheel</option>
-                </select>
-            </div>
+        <div class="form-group">
+            <label>Confirm Password</label>
+            <input type="password" id="confirm" required />
+        </div>
 
-            <div class="form-group">
-                <label for="paypal">PayPal Email (for payouts)</label>
-                <input id="paypal" type="email" placeholder="you@paypal.com" required />
-            </div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" id="terms" />
+                I agree that I ride at my own risk and The Fast Roll is not liable.
+            </label>
+        </div>
 
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input id="password" type="password" required />
-            </div>
+        <button class="primary-btn" type="submit">Create Rider Account</button>
+    </form>
+</div>
 
-            <div class="form-group">
-                <label for="confirm">Confirm Password</label>
-                <input id="confirm" type="password" required />
-            </div>
-
-            <div class="form-group">
-                <label style="display:flex; gap:10px; align-items:center;">
-                    <input id="terms" type="checkbox" required />
-                    I agree to the rider rules & safety guidelines.
-                </label>
-            </div>
-
-            <button class="primary-btn" type="submit">Create Rider Account</button>
-
-        </form>
-    </main>
-
-    <script src="../../js/app.js"></script>
+<script src="/js/app.js"></script>
 </body>
 </html>
