@@ -6,7 +6,7 @@ compatibility_date = "2024-11-01"
 PUBLIC_URL = "https://YOUR-R2-PUBLIC-DOMAIN"
 
 [[d1_databases]]
-binding = "DB"
+binding = "DB_fast"
 database_name = "fast-roll"
 database_id = "7d5e0c28-d0b2-490d-89d0-9c08b76a997c"
 
