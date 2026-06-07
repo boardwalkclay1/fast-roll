@@ -7,8 +7,8 @@ PUBLIC_URL = "https://YOUR-R2-PUBLIC-DOMAIN"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "fastroll"
-database_id = "YOUR-D1-ID"
+database_name = "fast-roll"
+database_id = "7d5e0c28-d0b2-490d-89d0-9c08b76a997c"
 
 [[r2_buckets]]
 binding = "BUCKET"
