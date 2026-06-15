@@ -10,28 +10,24 @@ export default {
         headers: { "Content-Type": "application/json" }
       });
 
-    /* ---------------------------------------------------------
-       UTIL
-    --------------------------------------------------------- */
     const parseJSON = async (req) => await req.json();
     const parseForm = async (req) => await req.formData();
     const uuid = () => crypto.randomUUID();
 
-    // simple fee + weight helpers (distance can be added later)
     const getBaseLimits = () => ({
-      maxValue: 50,   // starter limit
-      maxWeight: 8    // starter weight limit (lbs)
+      maxValue: 50,
+      maxWeight: 8
     });
 
     const calculateExtraWeightFee = (weight, maxWeight) => {
       if (!weight || weight <= maxWeight) return 0;
       const extra = weight - maxWeight;
-      return extra * 1.5; // $1.50 per extra lb
+      return extra * 1.5;
     };
 
     const calculateDeliveryFee = (value, extraWeightFee) => {
-      const base = 5;              // base fee
-      const valueComponent = value * 0.2; // simple value-based component
+      const base = 5;
+      const valueComponent = value * 0.2;
       return base + valueComponent + extraWeightFee;
     };
 
@@ -43,9 +39,7 @@ export default {
       return (deliveryFee * 0.7) + extraWeightFee + tipPre + tipPost;
     };
 
-    /* ---------------------------------------------------------
-       CLIENT SIGNUP
-    --------------------------------------------------------- */
+    /* CLIENT SIGNUP */
     if (path === "/api/client/signup" && method === "POST") {
       const { name, email, phone, password } = await parseJSON(request);
 
@@ -58,9 +52,7 @@ export default {
       return json({ id, name, email, phone });
     }
 
-    /* ---------------------------------------------------------
-       CLIENT LOGIN
-    --------------------------------------------------------- */
+    /* CLIENT LOGIN */
     if (path === "/api/client/login" && method === "POST") {
       const { email, password } = await parseJSON(request);
 
@@ -79,9 +71,7 @@ export default {
       });
     }
 
-    /* ---------------------------------------------------------
-       CLIENT ORDER CREATION (value + weight + tip_pre)
-    --------------------------------------------------------- */
+    /* CLIENT ORDER CREATION */
     if (path === "/api/client/order" && method === "POST") {
       const { clientId, item, store, dropoff, value, weight, tipPre } = await parseJSON(request);
 
@@ -103,9 +93,9 @@ export default {
         `INSERT INTO orders (
            id, client_id, item, store, dropoff,
            value, weight, tip_pre, tip_post,
-           extra_weight_fee, delivery_fee, status
+           extra_weight_fee, delivery_fee, receipt_url, status
          )
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, 'pending_receipt')`
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, NULL, 'pending_receipt')`
       ).bind(
         id,
         clientId,
@@ -134,9 +124,7 @@ export default {
       });
     }
 
-    /* ---------------------------------------------------------
-       CLIENT RECEIPT UPLOAD
-    --------------------------------------------------------- */
+    /* CLIENT RECEIPT UPLOAD */
     if (path === "/api/client/receipt" && method === "POST") {
       const form = await parseForm(request);
       const orderId = form.get("orderId");
@@ -158,9 +146,7 @@ export default {
       return json({ success: true, receiptUrl: urlPublic });
     }
 
-    /* ---------------------------------------------------------
-       CLIENT STATUS
-    --------------------------------------------------------- */
+    /* CLIENT STATUS */
     if (path === "/api/client/status" && method === "GET") {
       const orderId = url.searchParams.get("orderId");
 
@@ -187,9 +173,7 @@ export default {
       });
     }
 
-    /* ---------------------------------------------------------
-       CLIENT TIP AFTER DELIVERY
-    --------------------------------------------------------- */
+    /* CLIENT TIP AFTER DELIVERY */
     if (path === "/api/client/tip-post" && method === "POST") {
       const { orderId, tipPost } = await parseJSON(request);
       const numericTipPost = Number(tipPost || 0);
@@ -201,24 +185,20 @@ export default {
       return json({ success: true });
     }
 
-    /* ---------------------------------------------------------
-       RIDER SIGNUP
-    --------------------------------------------------------- */
+    /* RIDER SIGNUP */
     if (path === "/api/rider/signup" && method === "POST") {
       const { name, vehicle, paypal, password } = await parseJSON(request);
 
       const id = uuid();
       await env.DB.prepare(
-        `INSERT INTO riders (id, name, vehicle, paypal_email, password_hash)
-         VALUES (?, ?, ?, ?, ?)`
+        `INSERT INTO riders (id, name, vehicle, paypal_email, password_hash, deliveries)
+         VALUES (?, ?, ?, ?, ?, 0)`
       ).bind(id, name, vehicle, paypal, password).run();
 
       return json({ id, name, vehicle, paypal });
     }
 
-    /* ---------------------------------------------------------
-       RIDER LOGIN
-    --------------------------------------------------------- */
+    /* RIDER LOGIN */
     if (path === "/api/rider/login" && method === "POST") {
       const { email, password } = await parseJSON(request);
 
@@ -237,9 +217,7 @@ export default {
       });
     }
 
-    /* ---------------------------------------------------------
-       RIDER JOB LIST (include tip_pre + estimated payout)
-    --------------------------------------------------------- */
+    /* RIDER JOB LIST */
     if (path === "/api/rider/jobs" && method === "GET") {
       const jobs = await env.DB.prepare(
         `SELECT
@@ -275,9 +253,7 @@ export default {
       return json(results);
     }
 
-    /* ---------------------------------------------------------
-       RIDER ACCEPT JOB
-    --------------------------------------------------------- */
+    /* RIDER ACCEPT JOB */
     if (path === "/api/rider/accept" && method === "POST") {
       const { jobId, riderId } = await parseJSON(request);
 
@@ -302,9 +278,7 @@ export default {
       return json({ success: true, jobRecordId });
     }
 
-    /* ---------------------------------------------------------
-       RIDER JOB DETAILS
-    --------------------------------------------------------- */
+    /* RIDER JOB DETAILS */
     if (path === "/api/rider/job" && method === "GET") {
       const id = url.searchParams.get("id");
 
@@ -323,9 +297,7 @@ export default {
       });
     }
 
-    /* ---------------------------------------------------------
-       RIDER PICKUP PHOTO
-    --------------------------------------------------------- */
+    /* RIDER PICKUP PHOTO */
     if (path === "/api/rider/pickup" && method === "POST") {
       const form = await parseForm(request);
       const jobId = form.get("jobId");
@@ -349,9 +321,7 @@ export default {
       return json({ success: true });
     }
 
-    /* ---------------------------------------------------------
-       RIDER DROPOFF PHOTO + COMPLETE
-    --------------------------------------------------------- */
+    /* RIDER DROPOFF PHOTO + COMPLETE + PIPEDREAM HOOK */
     if (path === "/api/rider/dropoff" && method === "POST") {
       const form = await parseForm(request);
       const jobId = form.get("jobId");
@@ -372,7 +342,45 @@ export default {
         `UPDATE orders SET status = 'delivered' WHERE id = ?`
       ).bind(jobId).run();
 
-      // here you can later call PayPal payouts using calculateRiderPayout(order)
+      const order = await env.DB.prepare(
+        `SELECT * FROM orders WHERE id = ?`
+      ).bind(jobId).first();
+
+      const job = await env.DB.prepare(
+        `SELECT * FROM jobs WHERE order_id = ?`
+      ).bind(jobId).first();
+
+      const rider = await env.DB.prepare(
+        `SELECT * FROM riders WHERE id = ?`
+      ).bind(job.rider_id).first();
+
+      const payout = calculateRiderPayout(order);
+
+      // call Pipedream webhook for payout + notifications
+      try {
+        await fetch(env.PIPEDREAM_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            event: "delivery_completed",
+            orderId: order.id,
+            riderId: rider.id,
+            riderPaypal: rider.paypal_email,
+            payout,
+            tipPre: order.tip_pre || 0,
+            tipPost: order.tip_post || 0,
+            deliveryFee: order.delivery_fee || 0,
+            extraWeightFee: order.extra_weight_fee || 0
+          })
+        });
+      } catch (err) {
+        // you can log or ignore; payout will be retried manually if needed
+      }
+
+      await env.DB.prepare(
+        `UPDATE riders SET deliveries = deliveries + 1 WHERE id = ?`
+      ).bind(rider.id).run();
+
       return json({ success: true });
     }
 
