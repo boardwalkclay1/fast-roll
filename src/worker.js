@@ -14,15 +14,17 @@ export default {
     const parseForm = async (req) => await req.formData();
     const uuid = () => crypto.randomUUID();
 
-    const getBaseLimits = () => ({
+    /* ---------------------------------------------------------
+       LIMITS + FEES
+    --------------------------------------------------------- */
+    const BASE_LIMITS = {
       maxValue: 50,
       maxWeight: 8
-    });
+    };
 
     const calculateExtraWeightFee = (weight, maxWeight) => {
       if (!weight || weight <= maxWeight) return 0;
-      const extra = weight - maxWeight;
-      return extra * 1.5;
+      return (weight - maxWeight) * 1.5;
     };
 
     const calculateDeliveryFee = (value, extraWeightFee) => {
@@ -32,14 +34,17 @@ export default {
     };
 
     const calculateRiderPayout = (order) => {
-      const deliveryFee = order.delivery_fee || 0;
-      const extraWeightFee = order.extra_weight_fee || 0;
-      const tipPre = order.tip_pre || 0;
-      const tipPost = order.tip_post || 0;
-      return (deliveryFee * 0.7) + extraWeightFee + tipPre + tipPost;
+      return (
+        (order.delivery_fee || 0) * 0.7 +
+        (order.extra_weight_fee || 0) +
+        (order.tip_pre || 0) +
+        (order.tip_post || 0)
+      );
     };
 
-    /* CLIENT SIGNUP */
+    /* ---------------------------------------------------------
+       CLIENT SIGNUP
+    --------------------------------------------------------- */
     if (path === "/api/client/signup" && method === "POST") {
       const { name, email, phone, password } = await parseJSON(request);
 
@@ -52,7 +57,9 @@ export default {
       return json({ id, name, email, phone });
     }
 
-    /* CLIENT LOGIN */
+    /* ---------------------------------------------------------
+       CLIENT LOGIN
+    --------------------------------------------------------- */
     if (path === "/api/client/login" && method === "POST") {
       const { email, password } = await parseJSON(request);
 
@@ -71,40 +78,41 @@ export default {
       });
     }
 
-    /* CLIENT ORDER CREATION */
+    /* ---------------------------------------------------------
+       CLIENT ORDER CREATION
+    --------------------------------------------------------- */
     if (path === "/api/client/order" && method === "POST") {
-      const { clientId, item, store, dropoff, value, weight, tipPre } = await parseJSON(request);
+      const { clientId, item, store, dropoff, value, weight, tipPre } =
+        await parseJSON(request);
 
       const id = uuid();
-      const numericValue = Number(value || 0);
-      const numericWeight = Number(weight || 0);
-      const numericTipPre = Number(tipPre || 0);
+      const v = Number(value || 0);
+      const w = Number(weight || 0);
+      const t = Number(tipPre || 0);
 
-      const limits = getBaseLimits();
+      if (v > BASE_LIMITS.maxValue)
+        return json({ error: "Item value exceeds limit." }, 400);
 
-      if (numericValue > limits.maxValue) {
-        return json({ error: "Item value exceeds current limit." }, 400);
-      }
-
-      const extraWeightFee = calculateExtraWeightFee(numericWeight, limits.maxWeight);
-      const deliveryFee = calculateDeliveryFee(numericValue, extraWeightFee);
+      const extraWeightFee = calculateExtraWeightFee(w, BASE_LIMITS.maxWeight);
+      const deliveryFee = calculateDeliveryFee(v, extraWeightFee);
 
       await env.DB.prepare(
         `INSERT INTO orders (
-           id, client_id, item, store, dropoff,
-           value, weight, tip_pre, tip_post,
-           extra_weight_fee, delivery_fee, receipt_url, status
-         )
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, NULL, 'pending_receipt')`
+          id, client_id, item, store, dropoff,
+          value, weight, tip_pre, tip_post,
+          extra_weight_fee, delivery_fee,
+          receipt_url, status
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, NULL, 'pending_receipt')`
       ).bind(
         id,
         clientId,
         item,
         store,
         dropoff,
-        numericValue,
-        numericWeight,
-        numericTipPre,
+        v,
+        w,
+        t,
         extraWeightFee,
         deliveryFee
       ).run();
@@ -115,16 +123,18 @@ export default {
         item,
         store,
         dropoff,
-        value: numericValue,
-        weight: numericWeight,
-        tipPre: numericTipPre,
+        value: v,
+        weight: w,
+        tipPre: t,
         extraWeightFee,
         deliveryFee,
         status: "pending_receipt"
       });
     }
 
-    /* CLIENT RECEIPT UPLOAD */
+    /* ---------------------------------------------------------
+       CLIENT RECEIPT UPLOAD
+    --------------------------------------------------------- */
     if (path === "/api/client/receipt" && method === "POST") {
       const form = await parseForm(request);
       const orderId = form.get("orderId");
@@ -146,7 +156,9 @@ export default {
       return json({ success: true, receiptUrl: urlPublic });
     }
 
-    /* CLIENT STATUS */
+    /* ---------------------------------------------------------
+       CLIENT STATUS
+    --------------------------------------------------------- */
     if (path === "/api/client/status" && method === "GET") {
       const orderId = url.searchParams.get("orderId");
 
@@ -173,19 +185,23 @@ export default {
       });
     }
 
-    /* CLIENT TIP AFTER DELIVERY */
+    /* ---------------------------------------------------------
+       CLIENT TIP AFTER DELIVERY
+    --------------------------------------------------------- */
     if (path === "/api/client/tip-post" && method === "POST") {
       const { orderId, tipPost } = await parseJSON(request);
-      const numericTipPost = Number(tipPost || 0);
+      const t = Number(tipPost || 0);
 
       await env.DB.prepare(
         `UPDATE orders SET tip_post = COALESCE(tip_post, 0) + ? WHERE id = ?`
-      ).bind(numericTipPost, orderId).run();
+      ).bind(t, orderId).run();
 
       return json({ success: true });
     }
 
-    /* RIDER SIGNUP */
+    /* ---------------------------------------------------------
+       RIDER SIGNUP
+    --------------------------------------------------------- */
     if (path === "/api/rider/signup" && method === "POST") {
       const { name, vehicle, paypal, password } = await parseJSON(request);
 
@@ -198,7 +214,9 @@ export default {
       return json({ id, name, vehicle, paypal });
     }
 
-    /* RIDER LOGIN */
+    /* ---------------------------------------------------------
+       RIDER LOGIN
+    --------------------------------------------------------- */
     if (path === "/api/rider/login" && method === "POST") {
       const { email, password } = await parseJSON(request);
 
@@ -217,7 +235,9 @@ export default {
       });
     }
 
-    /* RIDER JOB LIST */
+    /* ---------------------------------------------------------
+       RIDER JOB LIST
+    --------------------------------------------------------- */
     if (path === "/api/rider/jobs" && method === "GET") {
       const jobs = await env.DB.prepare(
         `SELECT
@@ -233,27 +253,26 @@ export default {
          WHERE o.status = 'waiting_rider' AND j.id IS NULL`
       ).all();
 
-      const results = (jobs.results || []).map((o) => {
-        const payout = calculateRiderPayout({
-          delivery_fee: o.delivery_fee || 0,
-          extra_weight_fee: o.extra_weight_fee || 0,
-          tip_pre: o.tip_pre || 0,
+      const results = (jobs.results || []).map((o) => ({
+        id: o.id,
+        item: o.item,
+        store: o.store,
+        dropoff: o.dropoff,
+        tip_pre: o.tip_pre || 0,
+        estimatedPayout: calculateRiderPayout({
+          delivery_fee: o.delivery_fee,
+          extra_weight_fee: o.extra_weight_fee,
+          tip_pre: o.tip_pre,
           tip_post: 0
-        });
-        return {
-          id: o.id,
-          item: o.item,
-          store: o.store,
-          dropoff: o.dropoff,
-          tip_pre: o.tip_pre || 0,
-          estimatedPayout: payout
-        };
-      });
+        })
+      }));
 
       return json(results);
     }
 
-    /* RIDER ACCEPT JOB */
+    /* ---------------------------------------------------------
+       RIDER ACCEPT JOB
+    --------------------------------------------------------- */
     if (path === "/api/rider/accept" && method === "POST") {
       const { jobId, riderId } = await parseJSON(request);
 
@@ -275,10 +294,12 @@ export default {
         `UPDATE orders SET status = 'assigned' WHERE id = ?`
       ).bind(jobId).run();
 
-      return json({ success: true, jobRecordId });
+      return json({ success: true });
     }
 
-    /* RIDER JOB DETAILS */
+    /* ---------------------------------------------------------
+       RIDER JOB DETAILS
+    --------------------------------------------------------- */
     if (path === "/api/rider/job" && method === "GET") {
       const id = url.searchParams.get("id");
 
@@ -297,7 +318,9 @@ export default {
       });
     }
 
-    /* RIDER PICKUP PHOTO */
+    /* ---------------------------------------------------------
+       RIDER PICKUP PHOTO
+    --------------------------------------------------------- */
     if (path === "/api/rider/pickup" && method === "POST") {
       const form = await parseForm(request);
       const jobId = form.get("jobId");
@@ -321,7 +344,9 @@ export default {
       return json({ success: true });
     }
 
-    /* RIDER DROPOFF PHOTO + COMPLETE + PIPEDREAM HOOK */
+    /* ---------------------------------------------------------
+       RIDER DROPOFF PHOTO + COMPLETE + PIPEDREAM WEBHOOK
+    --------------------------------------------------------- */
     if (path === "/api/rider/dropoff" && method === "POST") {
       const form = await parseForm(request);
       const jobId = form.get("jobId");
@@ -356,9 +381,9 @@ export default {
 
       const payout = calculateRiderPayout(order);
 
-      // call Pipedream webhook for payout + notifications
+      // PIPEDREAM WEBHOOK
       try {
-        await fetch(env.PIPEDREAM_WEBHOOK_URL, {
+        await fetch("https://eoia3h2q6lvocds.m.pipedream.net", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -374,7 +399,7 @@ export default {
           })
         });
       } catch (err) {
-        // you can log or ignore; payout will be retried manually if needed
+        console.log("Pipedream webhook failed:", err);
       }
 
       await env.DB.prepare(
