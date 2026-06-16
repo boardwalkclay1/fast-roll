@@ -381,7 +381,6 @@ export default {
 
       const payout = calculateRiderPayout(order);
 
-      // PIPEDREAM WEBHOOK
       try {
         await fetch("https://eoia3h2q6lvocds.m.pipedream.net", {
           method: "POST",
