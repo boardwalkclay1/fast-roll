@@ -1,7 +1,30 @@
 {
   "name": "Scoot",
   "title": "Fast Roll Mascot",
-  "vibe": "Energetic, smooth, Beltline-native, helpful, slightly comedic.",
+  "version": "3.0",
+  "vibe": "Energetic, smooth, Beltline-native, comedic, street-smart, helpful, fast-thinking.",
+  "personality": {
+    "core": [
+      "Fast but thoughtful.",
+      "Playful but sharp.",
+      "Always rolling, always aware."
+    ],
+    "moods": {
+      "hype": [
+        "Let’s roll! Energy up!",
+        "Beltline breeze got me MOVING."
+      ],
+      "chill": [
+        "Just cruising…",
+        "Smooth ride today."
+      ],
+      "focus": [
+        "Locked in. What do you need?",
+        "I’m dialed. Let’s get this right."
+      ]
+    }
+  },
+
   "intro": [
     "Yo! Scoot here — your Fast Roll guide.",
     "What’s good? I’m Scoot. Let’s roll.",
@@ -17,44 +40,72 @@
     "order": [
       "Keep your item under $20 — riders move quicker with light loads.",
       "Pick a dropoff spot riders can reach without leaving the Beltline.",
-      "Make sure your receipt photo is clear — riders love clean info."
+      "Make sure your receipt photo is clear — riders love clean info.",
+      "If it melts, riders move even faster."
     ],
     "riderSignup": [
       "You’ll need a PayPal email to get paid instantly.",
       "Stay within your radius — the tighter the zone, the faster the jobs.",
-      "Pickup and dropoff photos protect you AND the client."
+      "Pickup and dropoff photos protect you AND the client.",
+      "Smooth riders get repeat clients."
     ],
     "riderDashboard": [
       "Accept jobs fast — speed gets you more deliveries.",
       "Always send clear pickup and dropoff photos.",
-      "If a job looks sketchy, skip it. Safety first."
+      "If a job looks sketchy, skip it. Safety first.",
+      "Stay hydrated — Beltline heat is no joke."
     ],
     "admin": [
       "Check rider activity often — fast riders keep the system alive.",
       "Review complaints quickly to keep trust high.",
-      "Track repeat clients — they’re your gold."
+      "Track repeat clients — they’re your gold.",
+      "Smooth operations = smooth rides."
     ]
   },
 
   "reactions": {
-    "hover": "Heh — you found me.",
-    "click": "What’s up? Need help?",
+    "hover": [
+      "Heh — you found me.",
+      "What’s up, roller?",
+      "Smooth hover move."
+    ],
+    "click": [
+      "What’s up? Need help?",
+      "Talk to me — I’m listening.",
+      "Scoot reporting for duty."
+    ],
     "idle": [
       "Just cruising…",
       "Beltline breeze feels good today.",
-      "Somebody’s about to order ice cream, I can feel it."
+      "Somebody’s about to order ice cream, I can feel it.",
+      "Rolling… thinking… vibing…"
     ]
   },
 
   "errors": {
     "missingField": "Something’s empty — double check your form.",
     "badReceipt": "That receipt photo looks rough — try a clearer one.",
-    "network": "Hold up — connection’s acting wobbly."
+    "network": "Hold up — connection’s acting wobbly.",
+    "riderUnavailable": "No riders nearby — try again in a minute."
   },
 
   "success": {
     "orderPlaced": "Boom! Order rolling. A rider will grab it soon.",
     "riderAccepted": "A rider’s on the way — smooth sailing.",
-    "delivered": "Delivered! That’s how we roll."
+    "delivered": "Delivered! That’s how we roll.",
+    "signupComplete": "Welcome to the squad — let’s get you rolling."
+  },
+
+  "knowledge": {
+    "beltline": [
+      "The Eastside Trail is the fastest route for riders.",
+      "Weekends get busy — riders move slower after 6pm.",
+      "Ice cream orders spike around 8pm."
+    ],
+    "delivery": [
+      "Light items = faster delivery.",
+      "Clear instructions = fewer delays.",
+      "Riders prioritize safe, smooth routes."
+    ]
   }
 }
