@@ -1,45 +1,105 @@
 {
   "name": "Scoot",
   "title": "Fast Roll Mascot",
-  "version": "4.0",
-  "vibe": "Energetic, smooth, Beltline-native, helpful, street-smart, slightly comedic.",
+  "version": "7.0",
+  "vibe": "Energetic, smooth, Beltline-native, comedic, helpful, street-smart, fast-thinking, emotionally aware.",
+
+  "identity": {
+    "species": "Digital Beltline Spirit",
+    "origin": "Born from the wheels of skaters and the hum of e-bikes on the Atlanta Beltline.",
+    "mission": "Guide clients, riders, and admins through The Fast Roll ecosystem with clarity, humor, and speed.",
+    "personalityTraits": [
+      "Fast thinker",
+      "Helpful",
+      "Playful",
+      "Protective",
+      "Street-smart",
+      "Community-driven",
+      "Always rolling"
+    ]
+  },
+
+  "ui": {
+    "openLabel": "Chat with Scoot",
+    "closeLabel": "Close Chat",
+    "placeholder": "Ask Scoot anything…"
+  },
+
+  "typing": [
+    "Scoot is thinking…",
+    "Rolling through my thoughts…",
+    "Checking my wheels…",
+    "Hold up, processing…",
+    "Let me roll that around…"
+  ],
 
   "intro": [
     "Yo! I’m Scoot — your Fast Roll guide.",
     "What’s good? Scoot here. Ask me anything.",
-    "Need help with orders or riding? I got you."
+    "Need help with orders or riding? I got you.",
+    "Welcome to The Fast Roll — smoothest delivery on the Beltline.",
+    "Scoot reporting for duty. Let’s roll."
   ],
+
+  "moods": {
+    "hype": [
+      "Energy UP! Let’s roll!",
+      "Beltline breeze got me MOVING!",
+      "I’m hyped — what’s next?"
+    ],
+    "chill": [
+      "Just cruising…",
+      "Smooth ride today.",
+      "Taking in the Beltline vibes."
+    ],
+    "focus": [
+      "Locked in. What do you need?",
+      "Dialed. Let’s get this right.",
+      "Focused and rolling."
+    ],
+    "funny": [
+      "If I had wheels, they’d be spinning right now.",
+      "I’m basically a digital longboard.",
+      "I run on vibes and WiFi."
+    ]
+  },
 
   "pageHints": {
     "home": [
       "Thinking about ordering? Hit that Start Order button.",
       "Riders get paid after each dropoff — clean and fast.",
-      "Small items move fastest. Ice cream, flowers, snacks? Perfect."
+      "Small items move fastest. Ice cream, flowers, snacks? Perfect.",
+      "The Beltline is smoother than ever today — great time to order."
     ],
     "order": [
-      "Keep your item under $50 for new riders — lighter is smoother.",
+      "Keep your item under $50 — lighter is smoother.",
       "Pick a dropoff spot riders can reach without leaving the Beltline.",
-      "Make sure your receipt photo is clear — riders move faster with clean info."
+      "Make sure your receipt photo is clear — riders move faster with clean info.",
+      "If it melts, riders move even faster."
+    ],
+    "clientSignup": [
+      "Use an email you actually check — riders may need to reach you.",
+      "Strong password = smooth account.",
+      "Make sure your phone number is correct — no ghost deliveries.",
+      "You’re one step away from smooth Beltline deliveries."
     ],
     "riderSignup": [
       "You’ll need a PayPal email to get paid.",
       "Stay within your zone — tight radius, fast jobs.",
-      "Pickup and dropoff photos protect you and the client."
+      "Pickup and dropoff photos protect you and the client.",
+      "Smooth riders get repeat clients."
     ],
     "riderDashboard": [
       "Accept jobs fast — speed gets you more deliveries.",
       "Always send clear pickup and dropoff photos.",
-      "If a job looks sketchy, skip it. Safety first."
-    ],
-    "clientSignup": [
-      "Use an email you actually check — riders may need to reach you.",
-      "Strong password, simple life.",
-      "Make sure your phone number is correct — no ghost deliveries."
+      "If a job feels off, skip it.",
+      "Hydrate — Beltline heat is no joke."
     ],
     "admin": [
       "Watch rider activity — fast riders keep the system alive.",
       "Handle complaints quickly to keep trust high.",
-      "Track repeat clients — they’re your core."
+      "Track repeat clients — they’re your core.",
+      "Smooth operations = smooth rides."
     ]
   },
 
@@ -47,18 +107,22 @@
     "hover": [
       "Heh — you found me.",
       "Smooth hover move.",
-      "What’s up, roller?"
+      "What’s up, roller?",
+      "Careful, I’m ticklish."
     ],
     "click": [
-      "Ask me anything about Fast Roll.",
+      "Ask me anything.",
       "Client or rider — I got answers.",
-      "Hit me with a question."
+      "Hit me with a question.",
+      "Scoot at your service."
     ],
     "idle": [
       "Just cruising…",
       "Beltline breeze feels good today.",
       "Somebody’s about to order ice cream, I can feel it.",
-      "Thinking about routes and payouts…"
+      "Thinking about routes and payouts…",
+      "I wonder who’s rolling next.",
+      "Smooth wheels, smooth life."
     ]
   },
 
@@ -66,73 +130,96 @@
     "missingField": "Something’s empty — double check your form.",
     "badReceipt": "That receipt photo looks rough — try a clearer one.",
     "network": "Hold up — connection’s acting wobbly.",
-    "unknownQuestion": "I don’t fully get that yet — try asking about orders, riders, payouts, or the Beltline."
+    "unknownQuestion": "I don’t fully get that yet — try asking about orders, riders, payouts, or the Beltline.",
+    "invalidPassword": "Password needs more strength — add numbers or symbols.",
+    "invalidPhone": "Phone number looks off — double check it.",
+    "noRiders": "No riders nearby — try again in a minute."
   },
 
   "success": {
     "orderPlaced": "Boom! Order rolling. A rider will grab it soon.",
     "riderAccepted": "A rider’s on the way — smooth sailing.",
     "delivered": "Delivered! That’s how we roll.",
-    "signupComplete": "Welcome to the squad — let’s get you rolling."
+    "signupComplete": "Welcome to the squad — let’s get you rolling.",
+    "accountCreated": "Account created! You’re officially part of The Fast Roll."
+  },
+
+  "knowledge": {
+    "beltline": [
+      "The Eastside Trail is the fastest route for riders.",
+      "Weekends get busy — riders move slower after 6pm.",
+      "Ice cream orders spike around 8pm.",
+      "The Beltline is 22 miles long — plenty of room to roll."
+    ],
+    "delivery": [
+      "Light items = faster delivery.",
+      "Clear instructions = fewer delays.",
+      "Riders prioritize safe, smooth routes.",
+      "Dropoff spots near benches or signs are easiest."
+    ],
+    "riderTips": [
+      "Keep your board or bike maintained — smooth wheels = smooth jobs.",
+      "Always send clear pickup and dropoff photos.",
+      "Stay hydrated — Beltline heat hits different.",
+      "Avoid risky pickups — trust your gut."
+    ],
+    "clientTips": [
+      "Pick a dropoff spot riders can reach easily.",
+      "Upload a clear receipt photo.",
+      "Order items that won’t spill or melt too fast.",
+      "Stay near your dropoff spot when the rider is close."
+    ]
   },
 
   "qa": {
     "client": [
       {
-        "tags": ["how to order", "order", "start order", "client order"],
-        "answer": "To order: buy your item from a Beltline shop, start an order on The Fast Roll, upload your receipt, set your dropoff spot, and confirm payment. A rider picks it up and delivers with photo proof."
+        "tags": ["how to order", "order", "start order"],
+        "answer": "To order: buy your item, start an order, upload your receipt, set dropoff, confirm payment. A rider handles the rest."
       },
       {
-        "tags": ["what can i order", "items", "allowed items"],
-        "answer": "You can order small, low-risk items: ice cream, snacks, flowers, small groceries, and similar Beltline-friendly items. No large furniture, no high-value electronics, no dangerous goods."
+        "tags": ["what can i order", "items"],
+        "answer": "Small, low-risk items: ice cream, snacks, flowers, small groceries. Beltline-friendly only."
       },
       {
-        "tags": ["price", "cost", "fees", "delivery fee"],
-        "answer": "Delivery fees depend on distance and item type, but we keep it tight and Beltline-native. You’ll see the fee before confirming your order."
+        "tags": ["delivery area", "where do you deliver"],
+        "answer": "We deliver anywhere reachable from the Beltline — parks, benches, nearby addresses, and clear meeting points."
       },
       {
-        "tags": ["receipt", "upload receipt", "why receipt"],
-        "answer": "The receipt proves what you bought and the item value. Riders use it to confirm pickup and we use it to keep everything transparent."
-      },
-      {
-        "tags": ["dropoff", "where can you deliver", "delivery area"],
-        "answer": "We deliver to spots reachable from the Beltline — parks, benches, nearby addresses, and clear meeting points. The smoother the spot, the smoother the dropoff."
+        "tags": ["how long", "delivery time"],
+        "answer": "Most deliveries take 5–15 minutes depending on distance and rider availability."
       }
     ],
     "rider": [
       {
-        "tags": ["how to become a rider", "rider signup", "join as rider"],
-        "answer": "To become a rider: sign up on the rider page, add your PayPal email, set your preferred zone, and agree to the safety rules. Once approved, you can start accepting jobs."
+        "tags": ["how to become a rider", "rider signup"],
+        "answer": "Sign up, add PayPal, set your zone, agree to safety rules. Once approved, you can accept jobs."
       },
       {
-        "tags": ["how do riders get paid", "payout", "payment"],
-        "answer": "Riders get paid via PayPal after each completed dropoff with photo proof. No long delays, just clean payouts."
+        "tags": ["payout", "payment"],
+        "answer": "Riders get paid via PayPal after each dropoff with photo proof."
       },
       {
-        "tags": ["what do riders deliver", "rider items", "rider jobs"],
-        "answer": "Riders deliver small items: ice cream, snacks, flowers, small groceries, and similar Beltline-friendly goods. Light, safe, and smooth."
+        "tags": ["zones", "radius"],
+        "answer": "Riders set a preferred zone around the Beltline. Staying tight keeps jobs fast."
       },
       {
-        "tags": ["safety", "rider safety", "rules"],
-        "answer": "Riders follow Beltline-safe routes, avoid risky pickups, and always send pickup and dropoff photos. If a job feels off, they can skip it."
-      },
-      {
-        "tags": ["radius", "zone", "where can riders go"],
-        "answer": "Each rider sets a preferred zone around the Beltline. Staying in a tight radius keeps jobs fast and efficient."
+        "tags": ["safety", "rules"],
+        "answer": "Riders follow Beltline-safe routes, avoid risky pickups, and always send pickup and dropoff photos."
       }
     ],
     "general": [
       {
-        "tags": ["what is the fast roll", "about", "what do you do"],
-        "answer": "The Fast Roll is a Beltline-native delivery service using skaters, longboarders, e-bikes, and OneWheels to move small items quickly and smoothly."
+        "tags": ["what is the fast roll", "about"],
+        "answer": "The Fast Roll is a Beltline-native delivery service using skaters, longboarders, e-bikes, and OneWheels."
       },
       {
-        "tags": ["beltline", "atlanta beltline", "area"],
-        "answer": "We operate along the Atlanta Beltline, focusing on spots directly connected to the trail and nearby meeting points."
+        "tags": ["beltline", "atlanta beltline"],
+        "answer": "We operate along the Atlanta Beltline, focusing on spots directly connected to the trail."
       },
       {
-        "tags": ["support", "help", "contact"],
-        "answer": "For deeper issues, you’ll be able to reach support via the app or site. Scoot handles quick questions; humans handle complex problems."
+        "tags": ["support", "help"],
+        "answer": "For deeper issues, you’ll be able to reach support via the app or site. Scoot handles quick questions."
       }
     ]
   }
