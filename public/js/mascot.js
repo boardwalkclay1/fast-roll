@@ -4,37 +4,90 @@
 
     const data = await fetch("/json/mascot.json").then(r => r.json());
 
-    // Bubble
-    const bubble = document.createElement("div");
-    bubble.className = "mascot-bubble";
-    Object.assign(bubble.style, {
+    /* -------------------------------
+       CHAT WINDOW + TOGGLE BUTTON
+    --------------------------------*/
+    const chatWrapper = document.createElement("div");
+    Object.assign(chatWrapper.style, {
         position: "fixed",
-        bottom: "200px",
-        right: "40px",
-        maxWidth: "280px",
-        padding: "12px 16px",
-        background: "rgba(0,0,0,0.8)",
+        bottom: "90px",
+        right: "20px",
+        width: "260px",
+        background: "rgba(0,0,0,0.85)",
         color: "#fff",
+        padding: "12px",
         borderRadius: "12px",
         fontSize: "14px",
         lineHeight: "1.4",
         zIndex: "9999",
-        display: "none",
-        backdropFilter: "blur(4px)"
+        backdropFilter: "blur(4px)",
+        display: "none"
     });
-    document.body.appendChild(bubble);
 
+    chatWrapper.innerHTML = `
+        <div style="font-weight:600; margin-bottom:6px;">Scoot Chat</div>
+        <div id="scootOutput" style="min-height:40px; margin-bottom:8px;"></div>
+        <input id="scootInput" type="text" placeholder="Ask Scoot…" 
+            style="width:100%; padding:6px; border-radius:6px; border:none; margin-bottom:6px;">
+        <button id="scootSend" 
+            style="width:100%; padding:6px; border-radius:6px; border:none; background:#ffcc00; color:#000; font-weight:600; cursor:pointer;">
+            Send
+        </button>
+    `;
+    document.body.appendChild(chatWrapper);
+
+    const scootOutput = chatWrapper.querySelector("#scootOutput");
+    const scootInput = chatWrapper.querySelector("#scootInput");
+    const scootSend = chatWrapper.querySelector("#scootSend");
+
+    /* -------------------------------
+       TOGGLE BUTTON
+    --------------------------------*/
+    const toggleBtn = document.createElement("div");
+    toggleBtn.innerText = "💬";
+    Object.assign(toggleBtn.style, {
+        position: "fixed",
+        bottom: "12px",
+        right: "210px",
+        background: "#ffcc00",
+        color: "#000",
+        padding: "10px 14px",
+        borderRadius: "50%",
+        fontSize: "20px",
+        cursor: "pointer",
+        zIndex: "9999",
+        fontWeight: "bold",
+        boxShadow: "0 0 10px rgba(0,0,0,0.4)"
+    });
+    document.body.appendChild(toggleBtn);
+
+    let chatOpen = false;
+
+    toggleBtn.onclick = () => {
+        chatOpen = !chatOpen;
+        chatWrapper.style.display = chatOpen ? "block" : "none";
+    };
+
+    /* -------------------------------
+       MESSAGE SYSTEM (5 seconds)
+    --------------------------------*/
     function say(text) {
-        bubble.innerText = text;
-        bubble.style.display = "block";
-        setTimeout(() => bubble.style.display = "none", 5000);
+        scootOutput.innerText = text;
+        chatWrapper.style.display = "block";
+        chatOpen = true;
+
+        setTimeout(() => {
+            scootOutput.innerText = "";
+        }, 5000);
     }
 
     function pick(arr) {
         return arr[Math.floor(Math.random() * arr.length)];
     }
 
-    // Detect page
+    /* -------------------------------
+       PAGE DETECTION
+    --------------------------------*/
     const path = window.location.pathname;
     let pageType = "home";
     if (path.includes("order")) pageType = "order";
@@ -43,34 +96,9 @@
     if (path.includes("dashboard")) pageType = "riderDashboard";
     if (path.includes("admin")) pageType = "admin";
 
-    // Q&A UI
-    const qaWrapper = document.createElement("div");
-    Object.assign(qaWrapper.style, {
-        position: "fixed",
-        bottom: "12px",
-        right: "220px",
-        width: "220px",
-        background: "rgba(0,0,0,0.75)",
-        color: "#fff",
-        padding: "8px 10px",
-        borderRadius: "10px",
-        fontSize: "13px",
-        zIndex: "9998",
-        backdropFilter: "blur(4px)"
-    });
-
-    qaWrapper.innerHTML = `
-        <div style="margin-bottom:6px; font-weight:600;">Ask Scoot</div>
-        <input type="text" id="scootQuestion" placeholder="Ask about orders or riding…" style="width:100%; padding:6px 8px; border-radius:6px; border:none; margin-bottom:6px; font-size:12px;">
-        <button id="scootAskBtn" style="width:100%; padding:6px 8px; border-radius:6px; border:none; background:#ffcc00; color:#000; font-weight:600; font-size:12px; cursor:pointer;">
-            Ask
-        </button>
-    `;
-    document.body.appendChild(qaWrapper);
-
-    const questionInput = qaWrapper.querySelector("#scootQuestion");
-    const askBtn = qaWrapper.querySelector("#scootAskBtn");
-
+    /* -------------------------------
+       Q&A ENGINE
+    --------------------------------*/
     function normalize(text) {
         return text.toLowerCase().trim();
     }
@@ -79,14 +107,13 @@
         const q = normalize(question);
 
         const buckets = [
-            { type: "client", list: data.qa.client },
-            { type: "rider", list: data.qa.rider },
-            { type: "general", list: data.qa.general }
+            { list: data.qa.client },
+            { list: data.qa.rider },
+            { list: data.qa.general }
         ];
 
         for (const bucket of buckets) {
             for (const item of bucket.list) {
-                if (!item.tags) continue;
                 for (const tag of item.tags) {
                     if (q.includes(normalize(tag))) {
                         return item.answer;
@@ -98,33 +125,32 @@
         return data.errors.unknownQuestion;
     }
 
-    askBtn.addEventListener("click", () => {
-        const q = questionInput.value;
+    scootSend.onclick = () => {
+        const q = scootInput.value;
         if (!q) {
             say("Ask me something about orders, riders, payouts, or the Beltline.");
             return;
         }
-        const answer = findAnswer(q);
-        say(answer);
+        say(findAnswer(q));
+        scootInput.value = "";
+    };
+
+    scootInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") scootSend.click();
     });
 
-    questionInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-            askBtn.click();
-        }
-    });
-
-    // Intro + hints
-    setTimeout(() => {
-        say(pick(data.intro));
-    }, 800);
-
+    /* -------------------------------
+       INTRO + PAGE HINTS
+    --------------------------------*/
+    setTimeout(() => say(pick(data.intro)), 800);
     setTimeout(() => {
         const hints = data.pageHints[pageType];
         if (hints) say(pick(hints));
-    }, 3200);
+    }, 3000);
 
-    // Hover
+    /* -------------------------------
+       MASCOT REACTIONS
+    --------------------------------*/
     mascot.addEventListener("mouseenter", () => {
         say(pick(data.reactions.hover));
         mascot.style.transform = "scale(1.08)";
@@ -134,26 +160,23 @@
         mascot.style.transform = "scale(1)";
     });
 
-    // Click
     mascot.addEventListener("click", () => {
         say(pick(data.reactions.click));
     });
 
-    // Idle chatter
+    /* -------------------------------
+       IDLE CHATTER
+    --------------------------------*/
     setInterval(() => {
         say(pick(data.reactions.idle));
     }, Math.random() * 10000 + 20000);
 
-    // Public API
+    /* -------------------------------
+       PUBLIC API
+    --------------------------------*/
     window.scoot = {
-        success: (type) => {
-            if (data.success[type]) say(data.success[type]);
-        },
-        error: (type) => {
-            if (data.errors[type]) say(data.errors[type]);
-        },
-        hint: (topic) => {
-            if (data.pageHints[topic]) say(pick(data.pageHints[topic]));
-        }
+        success: (type) => data.success[type] && say(data.success[type]),
+        error: (type) => data.errors[type] && say(data.errors[type]),
+        hint: (topic) => data.pageHints[topic] && say(pick(data.pageHints[topic]))
     };
 })();
