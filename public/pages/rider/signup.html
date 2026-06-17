@@ -5,8 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rider Signup — The Fast Roll</title>
     <link rel="stylesheet" href="/css/style.css" />
+
+    <style>
+        /* Page-specific background */
+        body {
+            background: url('/img/fast-inline.jpg') center/cover no-repeat fixed;
+            background-color: #05060a;
+        }
+
+        /* Dark overlay for readability */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(0,0,0,0.55),
+                rgba(0,0,0,0.75)
+            );
+            z-index: -1;
+        }
+    </style>
 </head>
+
 <body>
+
 <nav class="nav">
     <div class="logo">
         <img src="/img/Fast-logo.png" class="logo-img" alt="The Fast Roll Logo" />
@@ -18,7 +41,7 @@
     </div>
 </nav>
 
-<div class="form-wrapper">
+<div class="form-wrapper" style="margin-top:140px;">
     <h1>Become a Rider</h1>
     <p>Longboarders, skaters, e‑bikes, OneWheels — roll the Beltline and get paid.</p>
 
@@ -35,7 +58,6 @@
                 <option value="inlines">Inline Skates</option>
                 <option value="skateboard">Skateboard</option>
                 <option value="escooter">E‑Scooter</option>
-                <option value="skateboard">Skateboard</option>
                 <option value="ebike">E‑Bike</option>
                 <option value="onewheel">OneWheel</option>
             </select>
