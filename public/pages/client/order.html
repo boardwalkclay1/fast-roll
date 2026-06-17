@@ -22,37 +22,37 @@
     <link rel="stylesheet" href="/css/style.css" />
 
     <style>
-        /* BLUE BACKGROUND */
+        /* CINEMATIC BLUE BACKGROUND */
         body {
-            background: #0d1b3d; /* deep cinematic blue */
+            background: #0d1b3d;
             margin: 0;
             padding: 0;
             position: relative;
             overflow-x: hidden;
         }
 
-        /* HUGE SCOOTER LOGO */
+        /* SCOOTER LOGO BACKGROUND — CLEAN + ZOOMED OUT */
         body::before {
             content: "";
             position: fixed;
             inset: 0;
             background-image: url("/img/fast-scooter-logo.jpg");
             background-repeat: no-repeat;
-            background-size: 320%; /* 4× bigger */
-            background-position: center -10%; /* lifted upward */
-            opacity: 0.28; /* NOT pale, but still behind content */
+            background-size: 240%; /* zoomed out from 320% */
+            background-position: center -5%; /* lifted slightly */
+            opacity: 0.30;
             z-index: -1;
             pointer-events: none;
         }
 
-        /* FORM WRAPPER — no washed-out white */
+        /* FORM WRAPPER */
         .form-wrapper {
-            background: rgba(255, 255, 255, 0.12); /* subtle glass */
+            background: rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(4px);
             padding: 32px;
             border-radius: 14px;
             max-width: 520px;
-            margin: 100px auto;
+            margin: 120px auto;
             color: #fff;
         }
 
@@ -67,6 +67,7 @@
             border: none;
             padding: 10px;
             border-radius: 8px;
+            width: 100%;
         }
 
         .primary-btn {
