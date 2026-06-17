@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="/css/style.css" />
 
     <style>
-        /* CINEMATIC BLUE BACKGROUND */
+        /* BLUE BACKGROUND */
         body {
             background: #0d1b3d;
             margin: 0;
@@ -31,16 +31,16 @@
             overflow-x: hidden;
         }
 
-        /* SCOOTER LOGO BACKGROUND — CLEAN + ZOOMED OUT */
+        /* SCOOTER LOGO — HALF THE SIZE OF LAST VERSION */
         body::before {
             content: "";
             position: fixed;
             inset: 0;
             background-image: url("/img/fast-scooter-logo.jpg");
             background-repeat: no-repeat;
-            background-size: 240%; /* zoomed out from 320% */
-            background-position: center -5%; /* lifted slightly */
-            opacity: 0.30;
+            background-size: 160%; /* HALF the previous 320% */
+            background-position: center -10%;
+            opacity: 0.28;
             z-index: -1;
             pointer-events: none;
         }
@@ -52,7 +52,7 @@
             padding: 32px;
             border-radius: 14px;
             max-width: 520px;
-            margin: 120px auto;
+            margin: 100px auto;
             color: #fff;
         }
 
@@ -67,7 +67,6 @@
             border: none;
             padding: 10px;
             border-radius: 8px;
-            width: 100%;
         }
 
         .primary-btn {
