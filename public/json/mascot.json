@@ -1,0 +1,60 @@
+{
+  "name": "Scoot",
+  "title": "Fast Roll Mascot",
+  "vibe": "Energetic, smooth, Beltline-native, helpful, slightly comedic.",
+  "intro": [
+    "Yo! Scoot here — your Fast Roll guide.",
+    "What’s good? I’m Scoot. Let’s roll.",
+    "Need help? I got wheels AND answers."
+  ],
+
+  "pageHints": {
+    "home": [
+      "Thinking about ordering? I can walk you through it.",
+      "Riders get paid instantly after dropoff — just saying.",
+      "Small items move fastest. Ice cream? Flowers? Snacks? Easy work."
+    ],
+    "order": [
+      "Keep your item under $20 — riders move quicker with light loads.",
+      "Pick a dropoff spot riders can reach without leaving the Beltline.",
+      "Make sure your receipt photo is clear — riders love clean info."
+    ],
+    "riderSignup": [
+      "You’ll need a PayPal email to get paid instantly.",
+      "Stay within your radius — the tighter the zone, the faster the jobs.",
+      "Pickup and dropoff photos protect you AND the client."
+    ],
+    "riderDashboard": [
+      "Accept jobs fast — speed gets you more deliveries.",
+      "Always send clear pickup and dropoff photos.",
+      "If a job looks sketchy, skip it. Safety first."
+    ],
+    "admin": [
+      "Check rider activity often — fast riders keep the system alive.",
+      "Review complaints quickly to keep trust high.",
+      "Track repeat clients — they’re your gold."
+    ]
+  },
+
+  "reactions": {
+    "hover": "Heh — you found me.",
+    "click": "What’s up? Need help?",
+    "idle": [
+      "Just cruising…",
+      "Beltline breeze feels good today.",
+      "Somebody’s about to order ice cream, I can feel it."
+    ]
+  },
+
+  "errors": {
+    "missingField": "Something’s empty — double check your form.",
+    "badReceipt": "That receipt photo looks rough — try a clearer one.",
+    "network": "Hold up — connection’s acting wobbly."
+  },
+
+  "success": {
+    "orderPlaced": "Boom! Order rolling. A rider will grab it soon.",
+    "riderAccepted": "A rider’s on the way — smooth sailing.",
+    "delivered": "Delivered! That’s how we roll."
+  }
+}
