@@ -17,6 +17,19 @@
 
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="stylesheet" href="/css/style.css" />
+
+    <style>
+        /* Clayvonte photo bottom-right */
+        .corner-photo {
+            position: fixed;
+            bottom: 12px;
+            right: 12px;
+            width: 180px;          /* adjust size here */
+            opacity: 0.85;         /* visible but clean */
+            pointer-events: none;  /* never blocks clicks */
+            z-index: 20;
+        }
+    </style>
 </head>
 
 <body>
@@ -122,6 +135,9 @@
     <footer>
         <p>© 2026 The Fast Roll — Built for the Atlanta Beltline</p>
     </footer>
+
+    <!-- Clayvonte bottom-right photo -->
+    <img src="/img/fast-inline-transparent.png" class="corner-photo" alt="Fast Roll Inline Graphic" />
 
     <script src="/js/app.js"></script>
 </body>
