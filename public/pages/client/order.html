@@ -22,33 +22,71 @@
     <link rel="stylesheet" href="/css/style.css" />
 
     <style>
-        /* SCOOTER BACKGROUND */
+        /* BLUE BACKGROUND */
         body {
+            background: #0d1b3d; /* deep cinematic blue */
+            margin: 0;
+            padding: 0;
             position: relative;
-            background: #ffffff;
+            overflow-x: hidden;
         }
 
+        /* HUGE SCOOTER LOGO */
         body::before {
             content: "";
             position: fixed;
             inset: 0;
             background-image: url("/img/fast-scooter-logo.jpg");
-            background-size: 78%;
             background-repeat: no-repeat;
-            background-position: center 8%;
-            opacity: 0.14;
+            background-size: 320%; /* 4× bigger */
+            background-position: center -10%; /* lifted upward */
+            opacity: 0.28; /* NOT pale, but still behind content */
             z-index: -1;
             pointer-events: none;
         }
 
-        /* FORM WRAPPER */
+        /* FORM WRAPPER — no washed-out white */
         .form-wrapper {
-            background: rgba(255, 255, 255, 0.88);
-            backdrop-filter: blur(6px);
+            background: rgba(255, 255, 255, 0.12); /* subtle glass */
+            backdrop-filter: blur(4px);
             padding: 32px;
-            border-radius: 12px;
+            border-radius: 14px;
             max-width: 520px;
-            margin: 80px auto;
+            margin: 100px auto;
+            color: #fff;
+        }
+
+        .form-wrapper h1,
+        .form-wrapper p,
+        label {
+            color: #fff;
+        }
+
+        input, textarea, select {
+            background: rgba(255, 255, 255, 0.85);
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .primary-btn {
+            background: #ffcc00;
+            color: #000;
+            font-weight: bold;
+        }
+
+        nav.nav {
+            background: transparent;
+            color: #fff;
+        }
+
+        nav.nav .logo {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        nav.nav a {
+            color: #ffcc00;
         }
     </style>
 </head>
@@ -109,7 +147,7 @@
                 <input type="number" id="tipCustom" min="1" />
             </div>
 
-            <p class="form-note">
+            <p class="form-note" style="color:#fff;">
                 After submitting, you’ll upload your receipt and complete payment via PayPal.
             </p>
 
