@@ -5,14 +5,14 @@
     const data = await fetch("/json/mascot.json").then(r => r.json());
 
     /* -------------------------------
-       CHAT WINDOW + TOGGLE BUTTON
+       CHAT WINDOW
     --------------------------------*/
-    const chatWrapper = document.createElement("div");
-    Object.assign(chatWrapper.style, {
+    const chat = document.createElement("div");
+    Object.assign(chat.style, {
         position: "fixed",
         bottom: "90px",
         right: "20px",
-        width: "260px",
+        width: "280px",
         background: "rgba(0,0,0,0.85)",
         color: "#fff",
         padding: "12px",
@@ -21,31 +21,30 @@
         lineHeight: "1.4",
         zIndex: "9999",
         backdropFilter: "blur(4px)",
-        display: "none"
+        display: "none",
+        maxHeight: "320px",
+        overflowY: "auto"
     });
 
-    chatWrapper.innerHTML = `
+    chat.innerHTML = `
         <div style="font-weight:600; margin-bottom:6px;">Scoot Chat</div>
-        <div id="scootOutput" style="min-height:40px; margin-bottom:8px;"></div>
+        <div id="scootHistory" style="margin-bottom:8px;"></div>
+        <div id="scootTyping" style="font-size:12px; opacity:0.7; display:none;">${data.typing[0]}</div>
         <input id="scootInput" type="text" placeholder="Ask Scoot…" 
-            style="width:100%; padding:6px; border-radius:6px; border:none; margin-bottom:6px;">
-        <button id="scootSend" 
-            style="width:100%; padding:6px; border-radius:6px; border:none; background:#ffcc00; color:#000; font-weight:600; cursor:pointer;">
-            Send
-        </button>
+            style="width:100%; padding:6px; border-radius:6px; border:none; margin-top:8px;">
     `;
-    document.body.appendChild(chatWrapper);
+    document.body.appendChild(chat);
 
-    const scootOutput = chatWrapper.querySelector("#scootOutput");
-    const scootInput = chatWrapper.querySelector("#scootInput");
-    const scootSend = chatWrapper.querySelector("#scootSend");
+    const history = chat.querySelector("#scootHistory");
+    const typing = chat.querySelector("#scootTyping");
+    const input = chat.querySelector("#scootInput");
 
     /* -------------------------------
        TOGGLE BUTTON
     --------------------------------*/
-    const toggleBtn = document.createElement("div");
-    toggleBtn.innerText = "💬";
-    Object.assign(toggleBtn.style, {
+    const toggle = document.createElement("div");
+    toggle.innerText = "💬";
+    Object.assign(toggle.style, {
         position: "fixed",
         bottom: "12px",
         right: "210px",
@@ -59,26 +58,43 @@
         fontWeight: "bold",
         boxShadow: "0 0 10px rgba(0,0,0,0.4)"
     });
-    document.body.appendChild(toggleBtn);
+    document.body.appendChild(toggle);
 
-    let chatOpen = false;
-
-    toggleBtn.onclick = () => {
-        chatOpen = !chatOpen;
-        chatWrapper.style.display = chatOpen ? "block" : "none";
+    let open = false;
+    toggle.onclick = () => {
+        open = !open;
+        chat.style.display = open ? "block" : "none";
     };
 
     /* -------------------------------
-       MESSAGE SYSTEM (5 seconds)
+       MESSAGE SYSTEM
     --------------------------------*/
-    function say(text) {
-        scootOutput.innerText = text;
-        chatWrapper.style.display = "block";
-        chatOpen = true;
+    function addMessage(text, sender = "scoot") {
+        const bubble = document.createElement("div");
+        bubble.style.marginBottom = "6px";
+        bubble.style.padding = "8px 10px";
+        bubble.style.borderRadius = "8px";
+        bubble.style.maxWidth = "90%";
 
-        setTimeout(() => {
-            scootOutput.innerText = "";
-        }, 5000);
+        if (sender === "user") {
+            bubble.style.background = "#ffcc00";
+            bubble.style.color = "#000";
+            bubble.style.marginLeft = "auto";
+        } else {
+            bubble.style.background = "rgba(255,255,255,0.15)";
+        }
+
+        bubble.innerText = text;
+        history.appendChild(bubble);
+        chat.scrollTop = chat.scrollHeight;
+
+        setTimeout(() => bubble.remove(), 5000);
+    }
+
+    function say(text) {
+        addMessage(text, "scoot");
+        chat.style.display = "block";
+        open = true;
     }
 
     function pick(arr) {
@@ -89,35 +105,27 @@
        PAGE DETECTION
     --------------------------------*/
     const path = window.location.pathname;
-    let pageType = "home";
-    if (path.includes("order")) pageType = "order";
-    if (path.includes("signup") && path.includes("rider")) pageType = "riderSignup";
-    if (path.includes("signup") && path.includes("client")) pageType = "clientSignup";
-    if (path.includes("dashboard")) pageType = "riderDashboard";
-    if (path.includes("admin")) pageType = "admin";
+    let page = "home";
+    if (path.includes("order")) page = "order";
+    if (path.includes("signup") && path.includes("rider")) page = "riderSignup";
+    if (path.includes("signup") && path.includes("client")) page = "clientSignup";
+    if (path.includes("dashboard")) page = "riderDashboard";
+    if (path.includes("admin")) page = "admin";
 
     /* -------------------------------
        Q&A ENGINE
     --------------------------------*/
-    function normalize(text) {
-        return text.toLowerCase().trim();
-    }
+    function normalize(t) { return t.toLowerCase().trim(); }
 
-    function findAnswer(question) {
-        const q = normalize(question);
+    function findAnswer(q) {
+        q = normalize(q);
 
-        const buckets = [
-            { list: data.qa.client },
-            { list: data.qa.rider },
-            { list: data.qa.general }
-        ];
+        const buckets = [data.qa.client, data.qa.rider, data.qa.general];
 
         for (const bucket of buckets) {
-            for (const item of bucket.list) {
+            for (const item of bucket) {
                 for (const tag of item.tags) {
-                    if (q.includes(normalize(tag))) {
-                        return item.answer;
-                    }
+                    if (q.includes(normalize(tag))) return item.answer;
                 }
             }
         }
@@ -125,28 +133,29 @@
         return data.errors.unknownQuestion;
     }
 
-    scootSend.onclick = () => {
-        const q = scootInput.value;
-        if (!q) {
-            say("Ask me something about orders, riders, payouts, or the Beltline.");
-            return;
-        }
-        say(findAnswer(q));
-        scootInput.value = "";
-    };
+    input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            const q = input.value.trim();
+            if (!q) return;
 
-    scootInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") scootSend.click();
+            addMessage(q, "user");
+            input.value = "";
+
+            typing.style.display = "block";
+            typing.innerText = pick(data.typing);
+
+            setTimeout(() => {
+                typing.style.display = "none";
+                say(findAnswer(q));
+            }, 600);
+        }
     });
 
     /* -------------------------------
        INTRO + PAGE HINTS
     --------------------------------*/
     setTimeout(() => say(pick(data.intro)), 800);
-    setTimeout(() => {
-        const hints = data.pageHints[pageType];
-        if (hints) say(pick(hints));
-    }, 3000);
+    setTimeout(() => say(pick(data.pageHints[page])), 3000);
 
     /* -------------------------------
        MASCOT REACTIONS
@@ -167,16 +176,14 @@
     /* -------------------------------
        IDLE CHATTER
     --------------------------------*/
-    setInterval(() => {
-        say(pick(data.reactions.idle));
-    }, Math.random() * 10000 + 20000);
+    setInterval(() => say(pick(data.reactions.idle)), Math.random() * 10000 + 20000);
 
     /* -------------------------------
        PUBLIC API
     --------------------------------*/
     window.scoot = {
-        success: (type) => data.success[type] && say(data.success[type]),
-        error: (type) => data.errors[type] && say(data.errors[type]),
-        hint: (topic) => data.pageHints[topic] && say(pick(data.pageHints[topic]))
+        success: (t) => data.success[t] && say(data.success[t]),
+        error: (t) => data.errors[t] && say(data.errors[t]),
+        hint: (t) => data.pageHints[t] && say(pick(data.pageHints[t]))
     };
 })();
