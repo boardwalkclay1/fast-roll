@@ -79,7 +79,7 @@ export default {
     }
 
     /* ---------------------------------------------------------
-       CLIENT ORDER CREATION (AUTH REQUIRED)
+       CLIENT ORDER CREATION
     --------------------------------------------------------- */
     if (path === "/api/client/order" && method === "POST") {
       const { clientId, item, store, dropoff, value, weight, tipPre } =
@@ -167,7 +167,7 @@ export default {
     }
 
     /* ---------------------------------------------------------
-       CLIENT STATUS
+       CLIENT ORDER STATUS
     --------------------------------------------------------- */
     if (path === "/api/client/status" && method === "GET") {
       const orderId = url.searchParams.get("orderId");
@@ -210,7 +210,7 @@ export default {
     }
 
     /* ---------------------------------------------------------
-       RIDER SIGNUP (UPDATED FOR PAYOUT METHODS)
+       RIDER SIGNUP
     --------------------------------------------------------- */
     if (path === "/api/rider/signup" && method === "POST") {
       const {
