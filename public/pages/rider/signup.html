@@ -42,6 +42,19 @@
             );
             z-index: -1;
         }
+
+        /* Scoot Mascot */
+        .corner-photo {
+            position: fixed;
+            bottom: 18px;
+            right: 18px;
+            width: 200px;
+            opacity: 0.9;
+            pointer-events: auto;
+            z-index: 9998;
+            transition: transform 0.25s ease;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -106,6 +119,11 @@
     </form>
 </div>
 
+<!-- SCOOT MASCOT -->
+<img src="/img/fast-board-transparent.jpg" class="corner-photo" alt="Scoot Mascot" />
+
 <script src="/js/app.js"></script>
+<script src="/js/mascot.js"></script>
+
 </body>
 </html>
