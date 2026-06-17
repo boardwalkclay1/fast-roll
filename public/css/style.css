@@ -80,7 +80,7 @@ body {
 /* HERO */
 .hero {
     height: 100vh;
-    background: url('/img/fast-index.jpg') center/cover no-repeat;
+    background: url('/img/fast-index.jpg') center calc(50% - 0.5in) / cover no-repeat;
     display: flex;
     align-items: center;
     padding: 0 40px;
@@ -100,7 +100,6 @@ body {
 }
 
 .hero::after {
-    /* speed streaks */
     content: "";
     position: absolute;
     inset: 0;
@@ -129,10 +128,6 @@ body {
     text-shadow: 0 10px 30px rgba(0,0,0,0.8);
 }
 
-.hero h1 span {
-    color: var(--fast-yellow);
-}
-
 .hero p {
     font-size: 1.15rem;
     margin-bottom: 30px;
@@ -155,11 +150,7 @@ body {
     cursor: pointer;
     font-size: 0.98rem;
     font-weight: 600;
-    transition:
-        transform 0.15s ease,
-        box-shadow 0.15s ease,
-        background 0.15s ease,
-        color 0.15s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, color 0.15s ease;
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -468,6 +459,7 @@ footer {
         padding: 0 18px;
         justify-content: center;
         text-align: left;
+        background-position: center calc(50% - 0.2in);
     }
 
     .hero h1 {
