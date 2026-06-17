@@ -79,11 +79,21 @@ export default {
     }
 
     /* ---------------------------------------------------------
-       CLIENT ORDER CREATION
+       CLIENT ORDER CREATION (AUTH REQUIRED)
     --------------------------------------------------------- */
     if (path === "/api/client/order" && method === "POST") {
       const { clientId, item, store, dropoff, value, weight, tipPre } =
         await parseJSON(request);
+
+      if (!clientId)
+        return json({ error: "Client not authenticated" }, 401);
+
+      const client = await env.DB.prepare(
+        `SELECT id FROM clients WHERE id = ?`
+      ).bind(clientId).first();
+
+      if (!client)
+        return json({ error: "Invalid client" }, 401);
 
       const id = uuid();
       const v = Number(value || 0);
@@ -200,18 +210,32 @@ export default {
     }
 
     /* ---------------------------------------------------------
-       RIDER SIGNUP
+       RIDER SIGNUP (UPDATED FOR PAYOUT METHODS)
     --------------------------------------------------------- */
     if (path === "/api/rider/signup" && method === "POST") {
-      const { name, vehicle, paypal, password } = await parseJSON(request);
+      const {
+        name,
+        vehicle,
+        payoutMethod,
+        payoutDetails,
+        password
+      } = await parseJSON(request);
 
       const id = uuid();
-      await env.DB.prepare(
-        `INSERT INTO riders (id, name, vehicle, paypal_email, password_hash, deliveries)
-         VALUES (?, ?, ?, ?, ?, 0)`
-      ).bind(id, name, vehicle, paypal, password).run();
 
-      return json({ id, name, vehicle, paypal });
+      await env.DB.prepare(
+        `INSERT INTO riders (id, name, vehicle, payout_method, payout_details, password_hash, deliveries)
+         VALUES (?, ?, ?, ?, ?, ?, 0)`
+      ).bind(
+        id,
+        name,
+        vehicle,
+        payoutMethod,
+        JSON.stringify(payoutDetails),
+        password
+      ).run();
+
+      return json({ id, name, vehicle, payoutMethod });
     }
 
     /* ---------------------------------------------------------
@@ -221,8 +245,8 @@ export default {
       const { email, password } = await parseJSON(request);
 
       const row = await env.DB.prepare(
-        `SELECT * FROM riders WHERE paypal_email = ?`
-      ).bind(email).first();
+        `SELECT * FROM riders WHERE payout_details LIKE ?`
+      ).bind(`%${email}%`).first();
 
       if (!row || row.password_hash !== password)
         return json({ error: "Invalid login" }, 401);
@@ -231,7 +255,8 @@ export default {
         id: row.id,
         name: row.name,
         vehicle: row.vehicle,
-        paypal: row.paypal_email
+        payoutMethod: row.payout_method,
+        payoutDetails: row.payout_details
       });
     }
 
@@ -345,7 +370,7 @@ export default {
     }
 
     /* ---------------------------------------------------------
-       RIDER DROPOFF PHOTO + COMPLETE + PIPEDREAM WEBHOOK
+       RIDER DROPOFF PHOTO + PAYOUT WEBHOOK
     --------------------------------------------------------- */
     if (path === "/api/rider/dropoff" && method === "POST") {
       const form = await parseForm(request);
@@ -389,8 +414,9 @@ export default {
             event: "delivery_completed",
             orderId: order.id,
             riderId: rider.id,
-            riderPaypal: rider.paypal_email,
             payout,
+            payoutMethod: rider.payout_method,
+            payoutDetails: rider.payout_details,
             tipPre: order.tip_pre || 0,
             tipPost: order.tip_post || 0,
             deliveryFee: order.delivery_fee || 0,
