@@ -5,55 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rider Signup — The Fast Roll</title>
 
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="/img/Fast-logo.png" />
-
-    <!-- Social Preview -->
-    <meta property="og:title" content="Become a Rider — The Fast Roll" />
-    <meta property="og:description" content="Longboarders, skaters, e‑bikes & OneWheels — earn fast payouts delivering along the Atlanta Beltline." />
-    <meta property="og:image" content="/img/fast-index.jpg" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://thefastroll.com/pages/rider/signup.html" />
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Become a Rider — The Fast Roll" />
-    <meta name="twitter:description" content="Roll the Beltline and get paid instantly after each delivery." />
-    <meta name="twitter:image" content="/img/fast-index.jpg" />
-
-    <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="stylesheet" href="/css/style.css" />
 
     <style>
-        /* Page-specific background — zoomed OUT */
         body {
             background: url('/img/fast-longboard.jpg') center/115% no-repeat fixed;
             background-color: #05060a;
         }
-
-        /* Dark overlay for readability */
         body::before {
             content: "";
             position: fixed;
             inset: 0;
-            background: linear-gradient(
-                to bottom,
-                rgba(0,0,0,0.55),
-                rgba(0,0,0,0.75)
-            );
+            background: linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.75));
             z-index: -1;
         }
-
-        /* Scoot Mascot */
         .corner-photo {
             position: fixed;
             bottom: 18px;
             right: 18px;
             width: 200px;
             opacity: 0.9;
-            pointer-events: auto;
+            cursor: pointer;
             z-index: 9998;
             transition: transform 0.25s ease;
-            cursor: pointer;
         }
     </style>
 </head>
@@ -73,9 +48,10 @@
 
 <div class="form-wrapper" style="margin-top:140px;">
     <h1>Become a Rider</h1>
-    <p>Longboarders, skaters, e‑bikes, OneWheels — roll the Beltline and get paid.</p>
+    <p>Roll the Beltline and get paid instantly after each delivery.</p>
 
     <form id="riderSignupForm">
+
         <div class="form-group">
             <label>Name</label>
             <input type="text" id="name" required />
@@ -96,6 +72,18 @@
         <div class="form-group">
             <label>PayPal Email</label>
             <input type="email" id="paypal" required />
+            <a href="https://www.paypal.com/signup" target="_blank" style="color:#ffcc00; font-size:13px; display:block; margin-top:6px;">
+                Don’t have PayPal? Create an account here.
+            </a>
+        </div>
+
+        <div class="form-group">
+            <button type="button" id="sendCodeBtn" class="secondary-btn">Send Verification Code</button>
+        </div>
+
+        <div class="form-group">
+            <label>Verification Code</label>
+            <input type="text" id="paypalCode" placeholder="Enter the 6‑digit code" />
         </div>
 
         <div class="form-group">
@@ -122,8 +110,8 @@
 <!-- SCOOT MASCOT -->
 <img src="/img/fast-board-transparent.jpg" class="corner-photo" alt="Scoot Mascot" />
 
-<script src="/js/app.js"></script>
 <script src="/js/mascot.js"></script>
+<script src="/js/riderSignup.js"></script>
 
 </body>
 </html>
