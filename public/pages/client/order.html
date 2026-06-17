@@ -6,10 +6,41 @@
     <title>Start Order — The Fast Roll</title>
 
     <meta property="og:title" content="Start a Beltline Delivery — The Fast Roll" />
-    <meta property="og:image" content="../../public/img/fast-index.jpg" />
+    <meta property="og:image" content="/img/fast-index.jpg" />
     <meta property="og:description" content="Order a Beltline delivery from skaters, longboarders, e-bikes & OneWheels." />
 
-    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+
+    <style>
+        /* PAGE BACKGROUND — SCOOTER LOGO */
+        body {
+            position: relative;
+            background: #fff;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: url("/img/fast-scooter-logo.jpg");
+            background-size: 75%;
+            background-repeat: no-repeat;
+            background-position: center 10%;
+            opacity: 0.12;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* FORM WRAPPER TWEAKS */
+        .form-wrapper {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(4px);
+            padding: 32px;
+            border-radius: 12px;
+            max-width: 520px;
+            margin: 80px auto;
+        }
+    </style>
 </head>
 
 <body>
@@ -17,7 +48,7 @@
     <nav class="nav">
         <div class="logo">THE FAST ROLL</div>
         <div class="nav-links">
-            <a href="../../index.html">Home</a>
+            <a href="/index.html">Home</a>
         </div>
     </nav>
 
@@ -76,6 +107,6 @@
         </form>
     </main>
 
-    <script src="../../js/app.js"></script>
+    <script src="/js/app.js"></script>
 </body>
 </html>
