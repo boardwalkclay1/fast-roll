@@ -3,6 +3,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const sendCodeBtn = document.getElementById("sendCodeBtn");
     const signupForm = document.getElementById("riderSignupForm");
 
+    /* ---------------------------------------------------------
+       SEND PAYPAL VERIFICATION CODE
+    --------------------------------------------------------- */
     sendCodeBtn.addEventListener("click", async () => {
         const email = document.getElementById("paypal").value.trim();
 
@@ -13,10 +16,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const res = await fetch("/api/rider/send-paypal-code", {
             method: "POST",
-            body: JSON.stringify({ email }),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email })
         });
 
-        const data = await res.json();
+        let data = {};
+        try {
+            data = await res.json();
+        } catch (e) {
+            scoot.error("network");
+            return;
+        }
 
         if (data.success) {
             scoot.success("signupComplete");
@@ -25,6 +35,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    /* ---------------------------------------------------------
+       SIGNUP SUBMIT
+    --------------------------------------------------------- */
     signupForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -46,29 +59,49 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const res = await fetch("/api/rider/verify-paypal", {
+        /* ---------------------------------------------------------
+           VERIFY PAYPAL CODE
+        --------------------------------------------------------- */
+        const verifyRes = await fetch("/api/rider/verify-paypal", {
             method: "POST",
-            body: JSON.stringify({ email: paypal, code }),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: paypal, code })
         });
 
-        const verify = await res.json();
+        let verify = {};
+        try {
+            verify = await verifyRes.json();
+        } catch (e) {
+            scoot.error("network");
+            return;
+        }
 
         if (!verify.valid) {
             scoot.say("Your PayPal verification code is incorrect.");
             return;
         }
 
-        const create = await fetch("/api/rider/create", {
+        /* ---------------------------------------------------------
+           CREATE RIDER ACCOUNT
+        --------------------------------------------------------- */
+        const createRes = await fetch("/api/rider/create", {
             method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 name,
                 vehicle,
                 paypal,
                 password
-            }),
+            })
         });
 
-        const result = await create.json();
+        let result = {};
+        try {
+            result = await createRes.json();
+        } catch (e) {
+            scoot.error("network");
+            return;
+        }
 
         if (result.success) {
             scoot.success("signupComplete");
