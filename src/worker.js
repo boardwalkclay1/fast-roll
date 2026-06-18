@@ -132,7 +132,7 @@ export default {
         clientId,
         item,
         store,
-        dropoff,
+       dropoff,
         value: v,
         weight: w,
         tipPre: t,
@@ -236,6 +236,21 @@ export default {
       ).run();
 
       return json({ id, name, vehicle, payoutMethod });
+    }
+
+    /* ---------------------------------------------------------
+       PAYPAL VERIFICATION CODE (NEW)
+    --------------------------------------------------------- */
+    if (path === "/api/rider/send-paypal-code" && method === "POST") {
+      const { email } = await parseJSON(request);
+
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+      await env.DB.prepare(
+        `UPDATE riders SET paypal_code = ? WHERE payout_details LIKE ?`
+      ).bind(code, `%${email}%`).run();
+
+      return json({ success: true, code });
     }
 
     /* ---------------------------------------------------------
