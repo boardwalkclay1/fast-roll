@@ -88,7 +88,7 @@
         history.appendChild(bubble);
         chat.scrollTop = chat.scrollHeight;
 
-        setTimeout(() => bubble.remove(), 5000);
+        setTimeout(() => bubble.remove(), 25000); // 5× slower
     }
 
     function say(text) {
@@ -147,21 +147,21 @@
             setTimeout(() => {
                 typing.style.display = "none";
                 say(findAnswer(q));
-            }, 600);
+            }, 3000); // 5× slower
         }
     });
 
     /* -------------------------------
        INTRO + PAGE HINTS
     --------------------------------*/
-    setTimeout(() => say(pick(data.intro)), 800);
-    setTimeout(() => say(pick(data.pageHints[page])), 3000);
+    setTimeout(() => say(pick(data.intro)), 4000); // 5× slower
+    setTimeout(() => say(pick(data.pageHints[page])), 15000); // 5× slower
 
     /* -------------------------------
        MASCOT REACTIONS
     --------------------------------*/
     mascot.addEventListener("mouseenter", () => {
-        say(pick(data.reactions.hover));
+        setTimeout(() => say(pick(data.reactions.hover)), 2000); // slower
         mascot.style.transform = "scale(1.08)";
     });
 
@@ -170,13 +170,15 @@
     });
 
     mascot.addEventListener("click", () => {
-        say(pick(data.reactions.click));
+        setTimeout(() => say(pick(data.reactions.click)), 2000); // slower
     });
 
     /* -------------------------------
        IDLE CHATTER
     --------------------------------*/
-    setInterval(() => say(pick(data.reactions.idle)), Math.random() * 10000 + 20000);
+    setInterval(() => {
+        say(pick(data.reactions.idle));
+    }, Math.random() * 50000 + 60000); // 5× slower
 
     /* -------------------------------
        PUBLIC API
