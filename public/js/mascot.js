@@ -5,58 +5,76 @@
     const data = await fetch("/json/mascot.json").then(r => r.json());
 
     /* -------------------------------
-       CHAT WINDOW
+       CHAT WINDOW (SMALLER + COLLAPSIBLE)
     --------------------------------*/
     const chat = document.createElement("div");
     Object.assign(chat.style, {
         position: "fixed",
-        bottom: "90px",
+        bottom: "80px",
         right: "20px",
-        width: "280px",
+        width: "240px",
         background: "rgba(0,0,0,0.85)",
         color: "#fff",
-        padding: "12px",
-        borderRadius: "12px",
-        fontSize: "14px",
-        lineHeight: "1.4",
+        padding: "10px",
+        borderRadius: "10px",
+        fontSize: "13px",
+        lineHeight: "1.35",
         zIndex: "9999",
         backdropFilter: "blur(4px)",
         display: "none",
-        maxHeight: "320px",
-        overflowY: "auto"
+        maxHeight: "260px",
+        overflow: "hidden",
+        transition: "0.25s ease"
     });
 
     chat.innerHTML = `
-        <div style="font-weight:600; margin-bottom:6px;">Scoot Chat</div>
-        <div id="scootHistory" style="margin-bottom:8px;"></div>
-        <div id="scootTyping" style="font-size:12px; opacity:0.7; display:none;">${data.typing[0]}</div>
+        <div style="font-weight:600; margin-bottom:4px;">Scoot</div>
+
+        <div id="scootLast" style="margin-bottom:6px; min-height:20px;"></div>
+
+        <button id="toggleHistory" 
+            style="background:none; border:none; color:#ffcc00; font-size:12px; cursor:pointer; margin-bottom:6px;">
+            Show History
+        </button>
+
+        <div id="scootHistory" style="display:none; max-height:120px; overflow-y:auto; margin-bottom:6px;"></div>
+
         <input id="scootInput" type="text" placeholder="Ask Scoot…" 
-            style="width:100%; padding:6px; border-radius:6px; border:none; margin-top:8px;">
+            style="width:100%; padding:6px; border-radius:6px; border:none;">
     `;
     document.body.appendChild(chat);
 
+    const lastMsg = chat.querySelector("#scootLast");
     const history = chat.querySelector("#scootHistory");
-    const typing = chat.querySelector("#scootTyping");
+    const toggleHistory = chat.querySelector("#toggleHistory");
     const input = chat.querySelector("#scootInput");
 
+    let historyOpen = false;
+
+    toggleHistory.onclick = () => {
+        historyOpen = !historyOpen;
+        history.style.display = historyOpen ? "block" : "none";
+        toggleHistory.innerText = historyOpen ? "Hide History" : "Show History";
+    };
+
     /* -------------------------------
-       TOGGLE BUTTON
+       SMALLER CHAT BUTTON
     --------------------------------*/
     const toggle = document.createElement("div");
     toggle.innerText = "💬";
     Object.assign(toggle.style, {
         position: "fixed",
         bottom: "12px",
-        right: "210px",
+        right: "160px",
         background: "#ffcc00",
         color: "#000",
-        padding: "10px 14px",
+        padding: "8px 10px",
         borderRadius: "50%",
-        fontSize: "20px",
+        fontSize: "16px",
         cursor: "pointer",
         zIndex: "9999",
         fontWeight: "bold",
-        boxShadow: "0 0 10px rgba(0,0,0,0.4)"
+        boxShadow: "0 0 8px rgba(0,0,0,0.4)"
     });
     document.body.appendChild(toggle);
 
@@ -67,14 +85,15 @@
     };
 
     /* -------------------------------
-       MESSAGE SYSTEM
+       MESSAGE SYSTEM (SMALLER + LAST MESSAGE)
     --------------------------------*/
     function addMessage(text, sender = "scoot") {
         const bubble = document.createElement("div");
-        bubble.style.marginBottom = "6px";
-        bubble.style.padding = "8px 10px";
-        bubble.style.borderRadius = "8px";
+        bubble.style.marginBottom = "4px";
+        bubble.style.padding = "6px 8px";
+        bubble.style.borderRadius = "6px";
         bubble.style.maxWidth = "90%";
+        bubble.style.fontSize = "12px";
 
         if (sender === "user") {
             bubble.style.background = "#ffcc00";
@@ -86,9 +105,12 @@
 
         bubble.innerText = text;
         history.appendChild(bubble);
-        chat.scrollTop = chat.scrollHeight;
 
-        setTimeout(() => bubble.remove(), 25000); // 5× slower
+        // Show last message only
+        lastMsg.innerText = text;
+
+        // Auto-hide history bubble after 20s
+        setTimeout(() => bubble.remove(), 20000);
     }
 
     function say(text) {
@@ -141,28 +163,24 @@
             addMessage(q, "user");
             input.value = "";
 
-            typing.style.display = "block";
-            typing.innerText = pick(data.typing);
-
             setTimeout(() => {
-                typing.style.display = "none";
                 say(findAnswer(q));
-            }, 3000); // 5× slower
+            }, 1500);
         }
     });
 
     /* -------------------------------
-       INTRO + PAGE HINTS
+       INTRO + PAGE HINTS (SMALLER + DELAYED)
     --------------------------------*/
-    setTimeout(() => say(pick(data.intro)), 4000); // 5× slower
-    setTimeout(() => say(pick(data.pageHints[page])), 15000); // 5× slower
+    setTimeout(() => say(pick(data.intro)), 3000);
+    setTimeout(() => say(pick(data.pageHints[page])), 9000);
 
     /* -------------------------------
-       MASCOT REACTIONS
+       MASCOT REACTIONS (SMALLER + DELAYED)
     --------------------------------*/
     mascot.addEventListener("mouseenter", () => {
-        setTimeout(() => say(pick(data.reactions.hover)), 2000); // slower
-        mascot.style.transform = "scale(1.08)";
+        mascot.style.transform = "scale(1.05)";
+        setTimeout(() => say(pick(data.reactions.hover)), 1200);
     });
 
     mascot.addEventListener("mouseleave", () => {
@@ -170,15 +188,15 @@
     });
 
     mascot.addEventListener("click", () => {
-        setTimeout(() => say(pick(data.reactions.click)), 2000); // slower
+        setTimeout(() => say(pick(data.reactions.click)), 1200);
     });
 
     /* -------------------------------
-       IDLE CHATTER
+       IDLE CHATTER (LESS FREQUENT)
     --------------------------------*/
     setInterval(() => {
         say(pick(data.reactions.idle));
-    }, Math.random() * 50000 + 60000); // 5× slower
+    }, Math.random() * 40000 + 50000);
 
     /* -------------------------------
        PUBLIC API
