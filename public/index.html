@@ -1,180 +1,294 @@
-<!-- WELCOME -->
-<section class="welcome">
-    <h2>The First Delivery Service Built for the Beltline</h2>
-    <p>
-        The Fast Roll is the first delivery service in history designed specifically for the 
-        Atlanta Beltline — created by <strong>Boardwalk_Clay</strong>, a longboard dancer, 
-        skater, and community builder who lives the Beltline every day.
-    </p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Fast Roll — Beltline Delivery</title>
 
-    <p>
-        This is a <strong>community-powered delivery network</strong> — built for the people, 
-        by the people — connecting riders and locals through fast, human-powered delivery 
-        and real interaction.
-    </p>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/img/Fast-logo.png" />
 
-    <a href="https://instagram.com/boardwalk_clay" target="_blank" class="secondary-btn">
-        Follow Boardwalk_Clay on Instagram
-    </a>
-</section>
+    <!-- Social preview -->
+    <meta property="og:title" content="The Fast Roll — Beltline Delivery" />
+    <meta property="og:description" content="Beltline-native delivery by skaters, longboarders, e-bikes & OneWheels in Atlanta." />
+    <meta property="og:image" content="/img/fast-index.jpg" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
 
-<!-- WHAT IS THE FAST ROLL -->
-<section class="section">
-    <h2>What Is The Fast Roll?</h2>
-    <p class="section-sub">A Beltline-native delivery movement — not a corporate app.</p>
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="stylesheet" href="/css/style.css" />
 
-    <div class="dropdown">
-        <button class="dropdown-btn">A Delivery Service for the People</button>
-        <div class="dropdown-content">
-            <p>
-                The Fast Roll is built for the Beltline community — not for cars, not for 
-                traffic, not for corporate logistics. It’s powered by skaters, longboarders, 
-                e-bikes, and OneWheels who love the trail and the people on it.
-            </p>
+    <style>
+        /* Scoot bottom-right */
+        .corner-photo {
+            position: fixed;
+            bottom: 12px;
+            right: 12px;
+            width: 180px;
+            opacity: 0.9;
+            pointer-events: auto;
+            z-index: 9998;
+            transition: transform 0.25s ease;
+            cursor: pointer;
+        }
+
+        .dropdown {
+            margin-bottom: 14px;
+        }
+
+        .dropdown-btn {
+            width: 100%;
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .dropdown-content {
+            display: none;
+            background: rgba(255,255,255,0.12);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 6px;
+            font-size: 15px;
+        }
+
+        .dropdown.open .dropdown-content {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAV -->
+    <nav class="nav">
+        <div class="logo">
+            <img src="/img/Fast-logo.png" alt="The Fast Roll Logo" class="logo-img" />
         </div>
-    </div>
 
-    <div class="dropdown">
-        <button class="dropdown-btn">Created by Boardwalk_Clay</button>
-        <div class="dropdown-content">
-            <p>
-                Built by a real Beltline rider — not a CEO in a tower.  
-                Boardwalk_Clay created The Fast Roll to connect the community, support riders, 
-                and make the Beltline more interactive and fun.
-            </p>
+        <div class="nav-links">
+            <a href="#how">How It Works</a>
+            <a href="#order">Order</a>
+            <a href="#riders">Riders</a>
         </div>
-    </div>
+    </nav>
 
-    <div class="dropdown">
-        <button class="dropdown-btn">A Social Bridge, Not Just Delivery</button>
-        <div class="dropdown-content">
-            <p>
-                Every delivery is a chance to meet someone new, share a moment, and build 
-                real community connections. Riders aren’t anonymous — they’re part of the 
-                Beltline family.
-            </p>
+    <!-- HERO -->
+    <section class="hero hero-up">
+        <div class="hero-content">
+            <h1>Beltline Delivery. Fast. Smooth. On Wheels.</h1>
+            <p>Skaters, longboarders, e‑bikes & OneWheels delivering small items right off the Atlanta Beltline.</p>
+
+            <div class="hero-buttons">
+                <button onclick="location.href='/pages/client/order.html'" class="primary-btn">Order Delivery</button>
+                <button onclick="location.href='/pages/rider/signup.html'" class="secondary-btn">Become a Rider</button>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- HOW IT WORKS PREVIEW -->
-<section id="how" class="section">
-    <h2>How It Works</h2>
-    <p class="section-sub">Simple, safe, and built for small, low‑risk items.</p>
+    <!-- WELCOME -->
+    <section class="welcome">
+        <h2>The First Delivery Service Built for the Beltline</h2>
+        <p>
+            The Fast Roll is the first delivery service in history designed specifically for the 
+            Atlanta Beltline — created by <strong>Boardwalk_Clay</strong>, a longboard dancer, 
+            skater, and community builder who lives the Beltline every day.
+        </p>
 
-    <div class="dropdown">
-        <button class="dropdown-btn">1. You Buy the Item</button>
-        <div class="dropdown-content">
-            <p>
-                Grab ice cream, flowers, snacks, water, candy, or small groceries from any 
-                Beltline shop — or order online and upload your confirmation number.
-            </p>
+        <p>
+            This is a <strong>community-powered delivery network</strong> — built for the people, 
+            by the people — connecting riders and locals through fast, human-powered delivery 
+            and real interaction.
+        </p>
+
+        <a href="https://instagram.com/boardwalk_clay" target="_blank" class="secondary-btn">
+            Follow Boardwalk_Clay on Instagram
+        </a>
+    </section>
+
+    <!-- WHAT IS THE FAST ROLL -->
+    <section class="section">
+        <h2>What Is The Fast Roll?</h2>
+        <p class="section-sub">A Beltline-native delivery movement — not a corporate app.</p>
+
+        <div class="dropdown">
+            <button class="dropdown-btn">A Delivery Service for the People</button>
+            <div class="dropdown-content">
+                <p>
+                    The Fast Roll is built for the Beltline community — not for cars, not for 
+                    traffic, not for corporate logistics. It’s powered by skaters, longboarders, 
+                    e-bikes, and OneWheels who love the trail and the people on it.
+                </p>
+            </div>
         </div>
-    </div>
 
-    <div class="dropdown">
-        <button class="dropdown-btn">2. Upload Receipt or Confirmation</button>
-        <div class="dropdown-content">
-            <p>
-                Riders need proof of purchase to pick up your item.  
-                Upload a receipt photo or order confirmation — whatever the store requires.
-            </p>
+        <div class="dropdown">
+            <button class="dropdown-btn">Created by Boardwalk_Clay</button>
+            <div class="dropdown-content">
+                <p>
+                    Built by a real Beltline rider — not a CEO in a tower.  
+                    Boardwalk_Clay created The Fast Roll to connect the community, support riders, 
+                    and make the Beltline more interactive and fun.
+                </p>
+            </div>
         </div>
-    </div>
 
-    <div class="dropdown">
-        <button class="dropdown-btn">3. Rider Picks Up</button>
-        <div class="dropdown-content">
-            <p>
-                A nearby rider accepts your job, grabs your item, and sends a pickup photo 
-                for verification.
-            </p>
+        <div class="dropdown">
+            <button class="dropdown-btn">A Social Bridge, Not Just Delivery</button>
+            <div class="dropdown-content">
+                <p>
+                    Every delivery is a chance to meet someone new, share a moment, and build 
+                    real community connections. Riders aren’t anonymous — they’re part of the 
+                    Beltline family.
+                </p>
+            </div>
         </div>
-    </div>
+    </section>
 
-    <div class="dropdown">
-        <button class="dropdown-btn">4. Delivered Fast</button>
-        <div class="dropdown-content">
-            <p>
-                Your rider rolls straight to you and sends a dropoff photo.  
-                You can tip before or after delivery.
-            </p>
+    <!-- HOW IT WORKS PREVIEW -->
+    <section id="how" class="section">
+        <h2>How It Works</h2>
+        <p class="section-sub">Simple, safe, and built for small, low‑risk items.</p>
+
+        <div class="dropdown">
+            <button class="dropdown-btn">1. You Buy the Item</button>
+            <div class="dropdown-content">
+                <p>
+                    Grab ice cream, flowers, snacks, water, candy, or small groceries from any 
+                    Beltline shop — or order online and upload your confirmation number.
+                </p>
+            </div>
         </div>
-    </div>
 
-    <a href="/pages/how-it-works.html" class="primary-btn" style="margin-top:20px;">
-        Full How It Works Page
-    </a>
-</section>
-
-<!-- WHY USE IT -->
-<section class="section">
-    <h2>Why Use The Fast Roll?</h2>
-
-    <div class="dropdown">
-        <button class="dropdown-btn">Emergency Hydration</button>
-        <div class="dropdown-content">
-            <p>
-                Out on the trail and overheated?  
-                Riders can bring you cold water or electrolytes fast.
-            </p>
+        <div class="dropdown">
+            <button class="dropdown-btn">2. Upload Receipt or Confirmation</button>
+            <div class="dropdown-content">
+                <p>
+                    Riders need proof of purchase to pick up your item.  
+                    Upload a receipt photo or order confirmation — whatever the store requires.
+                </p>
+            </div>
         </div>
-    </div>
 
-    <div class="dropdown">
-        <button class="dropdown-btn">Ice Cream & Snacks</button>
-        <div class="dropdown-content">
-            <p>
-                Craving something sweet?  
-                Riders can grab ice cream, candy, or snacks from Beltline shops.
-            </p>
+        <div class="dropdown">
+            <button class="dropdown-btn">3. Rider Picks Up</button>
+            <div class="dropdown-content">
+                <p>
+                    A nearby rider accepts your job, grabs your item, and sends a pickup photo 
+                    for verification.
+                </p>
+            </div>
         </div>
-    </div>
 
-    <div class="dropdown">
-        <button class="dropdown-btn">Flowers for a Date</button>
-        <div class="dropdown-content">
-            <p>
-                Meeting someone special?  
-                Have a rider deliver flowers right to your spot — smooth and effortless.
-            </p>
+        <div class="dropdown">
+            <button class="dropdown-btn">4. Delivered Fast</button>
+            <div class="dropdown-content">
+                <p>
+                    Your rider rolls straight to you and sends a dropoff photo.  
+                    You can tip before or after delivery.
+                </p>
+            </div>
         </div>
-    </div>
 
-    <div class="dropdown">
-        <button class="dropdown-btn">Luxury Convenience</button>
-        <div class="dropdown-content">
-            <p>
-                Sometimes you just want something brought to you.  
-                The Fast Roll makes it easy, fast, and fun.
-            </p>
+        <a href="/pages/how-it-works.html" class="primary-btn" style="margin-top:20px;">
+            Full How It Works Page
+        </a>
+    </section>
+
+    <!-- WHY USE IT -->
+    <section class="section">
+        <h2>Why Use The Fast Roll?</h2>
+
+        <div class="dropdown">
+            <button class="dropdown-btn">Emergency Hydration</button>
+            <div class="dropdown-content">
+                <p>
+                    Out on the trail and overheated?  
+                    Riders can bring you cold water or electrolytes fast.
+                </p>
+            </div>
         </div>
-    </div>
-</section>
 
-<!-- PAYMENTS -->
-<section class="section dark">
-    <h2>Payments & Payouts</h2>
-
-    <div class="dropdown">
-        <button class="dropdown-btn">How You Pay</button>
-        <div class="dropdown-content">
-            <p>
-                Clients pay through PayPal for delivery fees and tips.  
-                It’s secure, fast, and works instantly.
-            </p>
-            <a href="/pages/client/order.html" class="primary-btn">Start an Order</a>
+        <div class="dropdown">
+            <button class="dropdown-btn">Ice Cream & Snacks</button>
+            <div class="dropdown-content">
+                <p>
+                    Craving something sweet?  
+                    Riders can grab ice cream, candy, or snacks from Beltline shops.
+                </p>
+            </div>
         </div>
-    </div>
 
-    <div class="dropdown">
-        <button class="dropdown-btn">How Riders Get Paid</button>
-        <div class="dropdown-content">
-            <p>
-                Riders get paid instantly after each delivery via PayPal.  
-                No waiting. No weekly payouts. No delays.
-            </p>
-            <a href="/pages/rider/signup.html" class="secondary-btn">Become a Rider</a>
+        <div class="dropdown">
+            <button class="dropdown-btn">Flowers for a Date</button>
+            <div class="dropdown-content">
+                <p>
+                    Meeting someone special?  
+                    Have a rider deliver flowers right to your spot — smooth and effortless.
+                </p>
+            </div>
         </div>
-    </div>
-</section>
+
+        <div class="dropdown">
+            <button class="dropdown-btn">Luxury Convenience</button>
+            <div class="dropdown-content">
+                <p>
+                    Sometimes you just want something brought to you.  
+                    The Fast Roll makes it easy, fast, and fun.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- PAYMENTS -->
+    <section class="section dark">
+        <h2>Payments & Payouts</h2>
+
+        <div class="dropdown">
+            <button class="dropdown-btn">How You Pay</button>
+            <div class="dropdown-content">
+                <p>
+                    Clients pay through PayPal for delivery fees and tips.  
+                    It’s secure, fast, and works instantly.
+                </p>
+                <a href="/pages/client/order.html" class="primary-btn">Start an Order</a>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <button class="dropdown-btn">How Riders Get Paid</button>
+            <div class="dropdown-content">
+                <p>
+                    Riders get paid instantly after each delivery via PayPal.  
+                    No waiting. No weekly payouts. No delays.
+                </p>
+                <a href="/pages/rider/signup.html" class="secondary-btn">Become a Rider</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 The Fast Roll — Built for the Atlanta Beltline</p>
+    </footer>
+
+    <!-- SCOOT MASCOT -->
+    <img src="/img/fast-board-transparent.jpg" class="corner-photo" alt="Scoot Mascot" />
+
+    <script>
+        // Dropdown logic
+        document.querySelectorAll(".dropdown-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                btn.parentElement.classList.toggle("open");
+            });
+        });
+    </script>
+
+    <script src="/js/app.js"></script>
+    <script src="/js/mascot.js"></script>
+</body>
+</html>
