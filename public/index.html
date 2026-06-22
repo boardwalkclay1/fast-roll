@@ -17,50 +17,6 @@
 
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="stylesheet" href="/css/style.css" />
-
-    <style>
-        /* Scoot bottom-right */
-        .corner-photo {
-            position: fixed;
-            bottom: 12px;
-            right: 12px;
-            width: 180px;
-            opacity: 0.9;
-            pointer-events: auto;
-            z-index: 9998;
-            transition: transform 0.25s ease;
-            cursor: pointer;
-        }
-
-        .dropdown {
-            margin-bottom: 14px;
-        }
-
-        .dropdown-btn {
-            width: 100%;
-            background: rgba(255,255,255,0.08);
-            color: #fff;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            text-align: left;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .dropdown-content {
-            display: none;
-            background: rgba(255,255,255,0.12);
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 6px;
-            font-size: 15px;
-        }
-
-        .dropdown.open .dropdown-content {
-            display: block;
-        }
-    </style>
 </head>
 
 <body>
@@ -73,8 +29,8 @@
 
         <div class="nav-links">
             <a href="#how">How It Works</a>
-            <a href="#order">Order</a>
-            <a href="#riders">Riders</a>
+            <a href="/pages/client/order.html">Order</a>
+            <a href="/pages/rider/signup.html">Riders</a>
         </div>
     </nav>
 
@@ -101,7 +57,7 @@
         </p>
 
         <p>
-            This is a <strong>community-powered delivery network</strong> — built for the people, 
+            This is a <strong class="glow-word">community-powered delivery network</strong> — built for the people, 
             by the people — connecting riders and locals through fast, human-powered delivery 
             and real interaction.
         </p>
@@ -195,9 +151,9 @@
             </div>
         </div>
 
-        <a href="/pages/how-it-works.html" class="primary-btn" style="margin-top:20px;">
+        <button onclick="location.href='/pages/how-it-works.html'" class="primary-btn" style="margin-top:20px;">
             Full How It Works Page
-        </a>
+        </button>
     </section>
 
     <!-- WHY USE IT -->
@@ -256,7 +212,7 @@
                     Clients pay through PayPal for delivery fees and tips.  
                     It’s secure, fast, and works instantly.
                 </p>
-                <a href="/pages/client/order.html" class="primary-btn">Start an Order</a>
+                <button onclick="location.href='/pages/client/order.html'" class="primary-btn">Start an Order</button>
             </div>
         </div>
 
@@ -267,7 +223,7 @@
                     Riders get paid instantly after each delivery via PayPal.  
                     No waiting. No weekly payouts. No delays.
                 </p>
-                <a href="/pages/rider/signup.html" class="secondary-btn">Become a Rider</a>
+                <button onclick="location.href='/pages/rider/signup.html'" class="secondary-btn">Become a Rider</button>
             </div>
         </div>
     </section>
@@ -279,8 +235,8 @@
     <!-- SCOOT MASCOT -->
     <img src="/img/fast-board-transparent.jpg" class="corner-photo" alt="Scoot Mascot" />
 
+    <!-- DROPDOWN SCRIPT -->
     <script>
-        // Dropdown logic
         document.querySelectorAll(".dropdown-btn").forEach(btn => {
             btn.addEventListener("click", () => {
                 btn.parentElement.classList.toggle("open");
